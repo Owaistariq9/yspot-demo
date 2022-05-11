@@ -1,8 +1,9 @@
-import { BadRequestException, HttpException, Injectable, NotFoundException, Post } from '@nestjs/common';
+import { BadRequestException, forwardRef, HttpException, Inject, Injectable, NotFoundException, Post } from '@nestjs/common';
 import { ClientProxy, ClientProxyFactory, RpcException, Transport } from '@nestjs/microservices';
 import * as Joi from 'joi';
 import { isValidObjectId } from 'mongoose';
 import { FollowersService } from 'src/followers/followers.service';
+import { InternshipsService } from 'src/internships/internships.service';
 import { SearchService } from 'src/search/search.service';
 import { UsersService } from 'src/users/user.service';
 import { PostsDataService } from './posts.data.service';
@@ -15,6 +16,8 @@ export class PostsService {
     constructor(private readonly postDataService: PostsDataService,
         private readonly userService: UsersService,
         private readonly followerService: FollowersService,
+        @Inject(forwardRef(() => InternshipsService))
+        private readonly internshipService: InternshipsService,
         private readonly searchService: SearchService){
         // this.client = ClientProxyFactory.create({
         //     transport: Transport.TCP,
@@ -365,10 +368,10 @@ export class PostsService {
     }
 
     async submitResponses(userId: string, responseObj: ResponseDTO){
-        let checkResponse = await this.postDataService.getResponseByUserIdAndPostId(userId,responseObj.postId);
-        if(checkResponse){
-            throw (new BadRequestException("User already submitted response for this post"));
-        }
+        // let checkResponse = await this.postDataService.getResponseByUserIdAndPostId(userId,responseObj.postId);
+        // if(checkResponse){
+        //     throw (new BadRequestException("User already submitted response for this post"));
+        // }
         responseObj.userId = userId;
         let responseData;
         if(responseObj.postType == PostsType.POST){
@@ -414,6 +417,7 @@ export class PostsService {
             }
             else{
                 responseData = await this.postDataService.insertResponse(responseObj);
+                let internshipData = await this.internshipService.incResponseCountByPostId(responseObj.postId);
             }
         }
         else{
@@ -475,6 +479,10 @@ export class PostsService {
     async getInternshipResponses(postId: string, page:number, limit:number){
         let skip = (page - 1) * limit;
         return {"data": await this.postDataService.getInternshipResponses(postId, skip, limit)}
+    }
+
+    async getInternshipResponseByUserIdAndPostId(postId: string, userId:string){
+        return await this.postDataService.getResponseByUserIdAndPostId(userId, postId)
     }
 
     async updateInternshipResponseStatus(_id: string, status: string){

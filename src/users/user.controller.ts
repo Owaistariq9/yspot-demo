@@ -24,8 +24,8 @@ import { UsersService } from './user.service';
   export class UsersController {
     constructor(private readonly usersService: UsersService) {}
 
-    @Post("reset-password")
     // @MessagePattern("reset-password")
+    @Post("reset-password")
     async resetPassword(@Body('email') email:string){
       try{
         const token = await this.usersService.forgetPasswordToken(email);
@@ -41,8 +41,8 @@ import { UsersService } from './user.service';
       }
     }
 
-    @Get("reset-password/:token")
     // @MessagePattern("checkResetPassword")
+    @Get("reset-password/:token")
     async checkResetPassword(@Param('token') token: string){
       try{
         const user = await this.usersService.checkForgetPasswordToken(token);
@@ -53,8 +53,8 @@ import { UsersService } from './user.service';
       }
     }
 
-    @Post("reset-password/:token")
     // @MessagePattern("changePassword")
+    @Post("reset-password/:token")
     async changePassword(@Param('token') token: string,
     @Request() req:any){
       try{
@@ -89,8 +89,8 @@ import { UsersService } from './user.service';
       }
     }
 
-    @UseGuards(JwtAuthGuard)
     // @MessagePattern("updateUserProfile")
+    @UseGuards(JwtAuthGuard)
     @Put("")
     async updateUserProfile(@Request() req:any,
     @Body() userUpdateProfile:UpdateUserDto) {
@@ -130,8 +130,9 @@ import { UsersService } from './user.service';
     // }
     
     
-    @Get('profile')
     // @MessagePattern("profile")
+    @UseGuards(JwtAuthGuard)
+    @Get('profile')
     async getUserProfile(
     @Request() req:any) {
       try{
@@ -148,4 +149,17 @@ import { UsersService } from './user.service';
         throw (new InternalServerErrorException(err.message));
       }
     }
+
+    @Get(':userType/:page/:limit')
+    // @MessagePattern("profile")
+    async getAllUsersByTypeAndPage(
+    @Request() req:any) {
+      if(req.params.userType === "business" || req.params.userType === "youth"){
+        return await this.usersService.getAllUsersByTypeAndPage(req.params.userType,req.params.page,req.params.limit);
+      }
+      else{
+        throw (new BadRequestException("Invalid userType"));
+      }
+    }
+
   }

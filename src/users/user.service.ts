@@ -119,4 +119,17 @@ export class UsersService {
     delete updatedUser.password
     return updatedUser;
   }
+
+  async getAllUsersByTypeAndPage(userType:string, page:number, limit:number,){
+    let skip = (page - 1) * limit;
+    let user = await this.usersDataService.getAllUsersByPage(userType, limit, skip);
+    let totalCount = await this.usersDataService.getUsersCountByType(userType);
+    if(!user){
+      throw (new NotFoundException("No users found"));
+    }
+    return {
+      totalUsers: user,
+      totalCount: totalCount
+    };
+  }
 }

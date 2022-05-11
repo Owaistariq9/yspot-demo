@@ -27,6 +27,7 @@ export class UsersDataService {
         return err
     }
 }
+
 async getUserByEmail(email: string) {
     try{
       const user = await this.userModel.findOne({ email: email }).lean().exec();
@@ -36,6 +37,7 @@ async getUserByEmail(email: string) {
       return err
     }
 }
+
 async getUserById(id: string) {
     try{
       const user = await this.userModel.findById(id).lean().exec();
@@ -48,7 +50,7 @@ async getUserById(id: string) {
 async getForgetPasswordToken(token:string){
     let user = await this.userModel.findOne({forgetPasswordToken:token}).lean().exec();
     if(!user){
-      throw new RpcException(new NotFoundException("Invalid Token"));
+      throw (new NotFoundException("Invalid Token"));
     }
     return user;
   }
@@ -56,7 +58,7 @@ async getForgetPasswordToken(token:string){
 async updateUserObject(_id:string,userObj:any){
     let user = await this.userModel.findOneAndUpdate({_id},{$set:userObj},{new:true}).lean().exec();
     if(!user){
-      throw new RpcException(new NotFoundException("Invalid Token"));
+      throw (new NotFoundException("Invalid Token"));
     }
     return user;
   }
@@ -64,7 +66,7 @@ async updateUserObject(_id:string,userObj:any){
   async incfollowerCount(userId:String){
     const post = await this.userModel.findOneAndUpdate({"_id":userId},{$inc :{'followerCount':1}},{new:true}).lean().exec();
     if(!post){
-        throw new RpcException(new NotFoundException("There is no posts with this Id"));
+        throw (new NotFoundException("There is no posts with this Id"));
     }
     else{
         return post;
@@ -74,7 +76,7 @@ async updateUserObject(_id:string,userObj:any){
 async decfollowerCount(userId:String){
   const post = await this.userModel.findOneAndUpdate({"_id":userId},{$inc :{'followerCount':-1}},{new:true}).lean().exec();
   if(!post){
-      throw new RpcException(new NotFoundException("There is no posts with this Id"));
+      throw (new NotFoundException("There is no posts with this Id"));
   }
   else{
       return post;
@@ -84,7 +86,7 @@ async decfollowerCount(userId:String){
 async incfollowingCount(userId:String){
   const post = await this.userModel.findOneAndUpdate({"_id":userId},{$inc :{'followingCount':1}},{new:true}).lean().exec();
   if(!post){
-      throw new RpcException(new NotFoundException("There is no posts with this Id"));
+      throw (new NotFoundException("There is no posts with this Id"));
   }
   else{
       return post;
@@ -94,11 +96,26 @@ async incfollowingCount(userId:String){
 async decfollowingCount(userId:String){
   const post = await this.userModel.findOneAndUpdate({"_id":userId},{$inc :{'followingCount':-1}},{new:true}).lean().exec();
   if(!post){
-      throw new RpcException(new NotFoundException("There is no posts with this Id"));
+      throw (new NotFoundException("There is no posts with this Id"));
   }
   else{
       return post;
   }
 }
+
+async getAllUsersByPage(userType: string, limit: number, skip: number){
+  let users = await this.userModel.find({"userType": userType})
+  .limit(limit)
+  .skip(skip)
+  .lean()
+  .exec();
+  return users
+}
+
+async getUsersCountByType(userType: string){
+  let users = await this.userModel.countDocuments({"userType": userType}).exec();
+  return users
+}
+
 
 }

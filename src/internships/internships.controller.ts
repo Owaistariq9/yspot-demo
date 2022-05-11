@@ -60,7 +60,7 @@ export class InternshipsController {
     @Get(":page/:limit")
     // @MessagePattern("getInternshipsByPage")
     async getInternshipsByPage(@Request() req:any){
-        let internships:any = await this.internshipsService.getInternshipByPage(req.params.page,req.params.limit);
+        let internships:any = await this.internshipsService.getInternshipByPage(req.params.page,req.params.limit,req.user._id);
         // console.log("here");
         return internships;
     }

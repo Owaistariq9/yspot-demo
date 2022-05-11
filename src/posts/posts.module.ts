@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { PostsController } from './posts.controller';
 import { PostsDataService } from './posts.data.service';
@@ -9,12 +9,15 @@ import { UserResponseSchema } from './models/post.userResponse.model';
 import { SearchModule } from 'src/search/search.module';
 import { UserModule } from 'src/users/user.module';
 import { FollowersModule } from 'src/followers/followers.module';
+import { InternshipsModule } from 'src/internships/internships.module';
 
 @Module({
   imports: [
     SearchModule,
     UserModule,
     FollowersModule,
+    forwardRef(() => InternshipsModule),
+    // InternshipsModule,
     MongooseModule.forFeature([{name:'Post', schema:PostsSchema},]),
     MongooseModule.forFeature([{name:'Responses', schema:ResponseSchema}]),
     MongooseModule.forFeature([{name:'UserResponses', schema:UserResponseSchema, collection:'UserResponses'}])

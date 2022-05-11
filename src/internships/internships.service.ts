@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { forwardRef, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { ClientProxy, ClientProxyFactory, RpcException, Transport } from '@nestjs/microservices';
 import { PostsService } from 'src/posts/posts.service';
 import { SearchService } from 'src/search/search.service';
@@ -11,7 +11,10 @@ export class InternshipsService {
     constructor(private readonly internshipsDataService: InternshipsDataService,
         private readonly searchService: SearchService,
         private readonly userService: UsersService,
-        private readonly postService: PostsService)
+        @Inject(forwardRef(() => PostsService))
+        private readonly postService: PostsService,
+        // private readonly postService: PostsService
+        )
     {
         // this.authService = ClientProxyFactory.create({
         //     transport: Transport.TCP,
@@ -62,7 +65,7 @@ export class InternshipsService {
         return await this.internshipsDataService.getInternshipById(id);
     }
 
-    async getInternshipByPage(page:number,limit:number){
+    async getInternshipByPage(page:number,limit:number, currentUserId:string){
         let skip = (page - 1) * limit;
         let internships = await this.searchService.getAllInternshipDataByPage(skip, limit);
         let updatedData = [];
@@ -96,6 +99,13 @@ export class InternshipsService {
             }
             let data = await this.userService.getUserById(internships[i]._source.data.userId);
             internships[i]._source.data.userId = data;
+            let check = await this.postService.getInternshipResponseByUserIdAndPostId( internships[i]._id, currentUserId);
+            if(check){
+                internships[i]._source.data.applied = true;
+            }
+            else{
+                internships[i]._source.data.applied = false;
+            }
             updatedData.push(internships[i]._source.data);
         }
         return {"internships": updatedData};
@@ -175,6 +185,20 @@ export class InternshipsService {
                 const espost = await this.searchService.updateInternshipData(internship._id, internship);
             }
         });
+    }
+
+    async incResponseCountByPostId(internshipId:String){
+        const internship = await this.internshipsDataService.incResponseCountByInternshipId(internshipId);;
+        const esinternship = await this.searchService.updateInternshipData(internship._id, internship);
+        // const esinternship = await this.searchService.getInternshipData(internship._id);
+        // console.log(esinternship);
+        // console.log(esinternship.body.hits.hits);
+        if(!internship){
+            throw (new NotFoundException("There is no internship with this Id"));
+        }
+        else{
+            return internship;
+        }
     }
 
     // async addResponse(responseObj: any, userId: string){

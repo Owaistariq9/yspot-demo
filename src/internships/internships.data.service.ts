@@ -93,6 +93,7 @@ export class InternshipsDataService {
             return post;
         }
     }
+    
 
     async decCommentCountByInternshipId(internshipId:String){
         const post = await this.InternshipModel.findOneAndUpdate({"_id": internshipId},{$inc :{'commentsCount': -1}},{new:true}).lean().exec();
@@ -136,6 +137,16 @@ export class InternshipsDataService {
 
     async decViewCountByInternshipId(internshipId:String){
         const post = await this.InternshipModel.findOneAndUpdate({"_id": internshipId},{$inc :{'viewCount': -1}},{new:true}).lean().exec();
+        if(!post){
+            throw (new NotFoundException("There is no posts with this Id"));
+        }
+        else{
+            return post;
+        }
+    }
+
+    async incResponseCountByInternshipId(internshipId:String){
+        const post = await this.InternshipModel.findOneAndUpdate({"_id": internshipId}, {$inc :{'responseCount':1}},{new:true}).lean().exec();
         if(!post){
             throw (new NotFoundException("There is no posts with this Id"));
         }

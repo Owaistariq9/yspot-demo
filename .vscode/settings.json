@@ -1,0 +1,8 @@
+{
+    "appService.defaultWebAppToDeploy": "/subscriptions/79c2dc0b-0057-4559-b945-291d2b9ce616/resourceGroups/appsvc_linux_centralus/providers/Microsoft.Web/sites/yspot-api-gateway",
+    "appService.deploySubpath": ".",
+    "appService.zipIgnorePattern": [
+        "node_modules{,/**}",
+        ".vscode{,/**}"
+    ]
+}

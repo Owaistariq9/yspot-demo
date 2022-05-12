@@ -30,7 +30,7 @@ imports: [
             requestTimeout: 60000,
             auth: {
                 username: "elastic",
-                password: "lQVf0fD9652w4T7VB0Jy5pQ7"
+                password: "RT7xOiOC5KqPQMdRKksWtslB"
             }
         })
       })

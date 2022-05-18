@@ -77,8 +77,19 @@ export class InternshipsController {
     @Post(":internshipId/recommand")
     // @MessagePattern("addRecommand")
     async addRecommand(@Request() req:any){
-        let recommands = await this.internshipsService.addRecommands(req.body.recommandList,req.userId,req.params.internshipId);
+        if(!req.body.recommandList){
+            throw new BadRequestException("recommandList required!")
+        }
+        let recommands = await this.internshipsService.addRecommands(req.body.recommandList,req.user._id,req.params.internshipId);
         return recommands;
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Get("recommanded/:page/:limit")
+    // @MessagePattern("addRecommand")
+    async getAllRecommandedInternships(@Request() req:any){
+        let recommands = await this.internshipsService.getRecommandedInternships(req.user._id,req.params.page,req.params.limit);
+        return {"recommandedTnternships": recommands};
     }
 
     // @MessagePattern("submitInternshipResponse")

@@ -172,19 +172,37 @@ export class InternshipsService {
     }
 
     async addRecommands(recommandList: any, userId: string, internshipId: string){
-        recommandList.forEach(async x => {
-            let internship:any = await this.internshipsDataService.getRecommands(internshipId,userId,x);
-            if(!internship){
-                let obj= {
-                    internshipId: internshipId,
-                    recommandedBy: userId,
-                    recommandedTo: x
-                }
-                const recommand = await this.internshipsDataService.insertRecommands(obj);
-                internship = await this.internshipsDataService.incRecommandCountByInternshipId(internshipId);
-                const espost = await this.searchService.updateInternshipData(internship._id, internship);
+        let recommandDataList = await this.internshipsDataService.getExistingRecommandations(internshipId, recommandList);
+
+        let recommondListObj = [];
+        recommandDataList.forEach( async x => {
+            // recommondListObj.includes(x.recommandedTo)
+            let index = recommandList.indexOf(x.recommandedTo)
+            if(index !=-1){
+                recommandList.splice(index,1)
             }
+        })
+        recommandList.forEach(async x => {
+            // let internship:any = await this.internshipsDataService.getRecommands(internshipId,userId,x);
+            // if(!internship){
+            //     let obj= {
+            //         internshipId: internshipId,
+            //         recommandedBy: userId,
+            //         recommandedTo: x
+            //     }
+            //     const recommand = await this.internshipsDataService.insertRecommands(obj);
+            //     internship = await this.internshipsDataService.incRecommandCountByInternshipId(internshipId);
+            //     const espost = await this.searchService.updateInternshipData(internship._id, internship);
+            // }
+            let obj = {
+                internshipId: internshipId,
+                recommandedBy: userId,
+                recommandedTo: x
+            }
+            recommondListObj.push(obj);
         });
+        const users = await this.userService.incManyJobRecommandCount(recommandList);
+        return await this.internshipsDataService.insertManyRecommands(recommondListObj);
     }
 
     async incResponseCountByPostId(internshipId:String){
@@ -199,6 +217,16 @@ export class InternshipsService {
         else{
             return internship;
         }
+    }
+
+    async getRecommandedInternships(userId: string, page:number, limit:number){
+        let skip = (page - 1) * limit;
+        let recommand = await this.internshipsDataService.getUserRecommandations(userId, limit, skip);
+        let internshipList = [];
+        recommand.forEach(x => {
+            internshipList.push(x.internshipId);
+        })
+        return await this.internshipsDataService.getUserInternshipsByIdList(internshipList);
     }
 
     // async addResponse(responseObj: any, userId: string){

@@ -63,43 +63,88 @@ async updateUserObject(_id:string,userObj:any){
     return user;
   }
 
-  async incfollowerCount(userId:String){
-    const post = await this.userModel.findOneAndUpdate({"_id":userId},{$inc :{'followerCount':1}},{new:true}).lean().exec();
-    if(!post){
-        throw (new NotFoundException("There is no posts with this Id"));
+  async incJobAppliedCount(userId:String){
+    const user = await this.userModel.findOneAndUpdate({"_id":userId},{$inc :{'jobStats.applied':1}},{new:true}).lean().exec();
+    if(!user){
+        throw (new NotFoundException("There is no user with this Id"));
     }
     else{
-        return post;
+        return user;
     }
-}
+  }
+  
+  async incJobShortlistCount(userId:String){
+    const user = await this.userModel.findOneAndUpdate({"_id":userId},{$inc :{'jobStats.shortlisted':1}},{new:true}).lean().exec();
+    if(!user){
+        throw (new NotFoundException("There is no user with this Id"));
+    }
+    else{
+        return user;
+    }
+  }
+
+  async incJobRecommandCount(userId:String){
+    const user = await this.userModel.findOneAndUpdate({"_id":userId},{$inc :{'jobStats.recommanded':1}},{new:true}).lean().exec();
+    if(!user){
+        throw (new NotFoundException("There is no user with this Id"));
+    }
+    else{
+        return user;
+    }
+  }
+
+  async incManyJobRecommandCount(userIds: any): Promise<any>{
+    const user = await this.userModel.updateMany({"_id": { $in: userIds } }, {$inc :{'jobStats.recommanded':1}},{new:true}).lean().exec();
+    return user;
+  }
+
+  async incJobInterviewCount(userId:String){
+    const user = await this.userModel.findOneAndUpdate({"_id":userId},{$inc :{'jobStats.interviewed':1}},{new:true}).lean().exec();
+    if(!user){
+        throw (new NotFoundException("There is no user with this Id"));
+    }
+    else{
+        return user;
+    }
+  }
+
+  async incfollowerCount(userId:String){
+    const user = await this.userModel.findOneAndUpdate({"_id":userId},{$inc :{'followerCount':1}},{new:true}).lean().exec();
+    if(!user){
+        throw (new NotFoundException("There is no user with this Id"));
+    }
+    else{
+        return user;
+    }
+  }
 
 async decfollowerCount(userId:String){
-  const post = await this.userModel.findOneAndUpdate({"_id":userId},{$inc :{'followerCount':-1}},{new:true}).lean().exec();
-  if(!post){
-      throw (new NotFoundException("There is no posts with this Id"));
+  const user = await this.userModel.findOneAndUpdate({"_id":userId},{$inc :{'followerCount':-1}},{new:true}).lean().exec();
+  if(!user){
+      throw (new NotFoundException("There is no user with this Id"));
   }
   else{
-      return post;
+      return user;
   }
 }
 
 async incfollowingCount(userId:String){
-  const post = await this.userModel.findOneAndUpdate({"_id":userId},{$inc :{'followingCount':1}},{new:true}).lean().exec();
-  if(!post){
-      throw (new NotFoundException("There is no posts with this Id"));
+  const user = await this.userModel.findOneAndUpdate({"_id":userId},{$inc :{'followingCount':1}},{new:true}).lean().exec();
+  if(!user){
+      throw (new NotFoundException("There is no user with this Id"));
   }
   else{
-      return post;
+      return user;
   }
 }
 
 async decfollowingCount(userId:String){
-  const post = await this.userModel.findOneAndUpdate({"_id":userId},{$inc :{'followingCount':-1}},{new:true}).lean().exec();
-  if(!post){
-      throw (new NotFoundException("There is no posts with this Id"));
+  const user = await this.userModel.findOneAndUpdate({"_id":userId},{$inc :{'followingCount':-1}},{new:true}).lean().exec();
+  if(!user){
+      throw (new NotFoundException("There is no user with this Id"));
   }
   else{
-      return post;
+      return user;
   }
 }
 

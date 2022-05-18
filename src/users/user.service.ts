@@ -132,4 +132,34 @@ export class UsersService {
       totalCount: totalCount
     };
   }
+
+  async incJobAppliedCount(userId: string){
+    let userUpdate = await this.usersDataService.incJobAppliedCount(userId);
+    userUpdate.password = "";
+    return userUpdate;
+  }
+
+  async incJobShortlistCount(userId: string){
+    let userUpdate = await this.usersDataService.incJobShortlistCount(userId);
+    userUpdate.password = "";
+    return userUpdate;
+  }
+
+  async incManyJobRecommandCount(userId: any){
+    let userUpdate = await this.usersDataService.incManyJobRecommandCount(userId);
+    return userUpdate;
+  }
+
+  async incJobRecommandCount(userId: string){
+    let userUpdate = await this.usersDataService.incJobRecommandCount(userId);
+    userUpdate.password = "";
+    return userUpdate;
+  }
+
+  async incJobInterviewCount(userId: string){
+    let userUpdate = await this.usersDataService.incJobInterviewCount(userId);
+    userUpdate.password = "";
+    return userUpdate;
+  }
+
 }

@@ -368,10 +368,10 @@ export class PostsService {
     }
 
     async submitResponses(userId: string, responseObj: ResponseDTO){
-        // let checkResponse = await this.postDataService.getResponseByUserIdAndPostId(userId,responseObj.postId);
-        // if(checkResponse){
-        //     throw (new BadRequestException("User already submitted response for this post"));
-        // }
+        let checkResponse = await this.postDataService.getResponseByUserIdAndPostId(userId,responseObj.postId);
+        if(checkResponse){
+            throw (new BadRequestException("User already submitted response for this post"));
+        }
         responseObj.userId = userId;
         let responseData;
         if(responseObj.postType == PostsType.POST){
@@ -418,6 +418,7 @@ export class PostsService {
             else{
                 responseData = await this.postDataService.insertResponse(responseObj);
                 let internshipData = await this.internshipService.incResponseCountByPostId(responseObj.postId);
+                let userData = await this.userService.incJobAppliedCount(userId);
             }
         }
         else{
@@ -485,7 +486,13 @@ export class PostsService {
         return await this.postDataService.getResponseByUserIdAndPostId(userId, postId)
     }
 
-    async updateInternshipResponseStatus(_id: string, status: string){
+    async updateInternshipResponseStatus(_id: string, status: string, userId: string){
+        if(status === "interviewed"){
+            let userData = await this.userService.incJobInterviewCount(userId);
+        }
+        if(status === "hired"){
+            let userData = await this.userService.incJobShortlistCount(userId);
+        }
         return await this.postDataService.updateInternshipResponseStatus(_id, status);
     }
 

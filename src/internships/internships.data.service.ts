@@ -34,14 +34,37 @@ export class InternshipsDataService {
         }
     }
 
+    async insertManyRecommands (arr: any){
+        try{
+            const recommands = await this.RecommandModel.insertMany(arr);
+            return recommands;
+        }
+        catch(err){
+            return err
+        }
+    }
+
     async getRecommands (internshipId: string, recommandedBy: string, recommandedTo: string){
-        const recommands = await this.RecommandModel.findOne( { $and:[ { "internshipId": internshipId }, {"recommandedBy": recommandedBy}, {"recommandedTo": recommandedTo}  ] } );
+        const recommands = await this.RecommandModel.findOne( { $and:[ { "internshipId": internshipId }, {"recommandedBy": recommandedBy}, {"recommandedTo": recommandedTo}  ] } ).lean().exec();
         if(!recommands){
             return null
         }
         else{
             return recommands;
         }
+    }
+
+    async getExistingRecommandations (internshipId: string, recommandedToIds: any){
+        const recommands = await this.RecommandModel.find( { $and: [ { "internshipId": internshipId }, {"recommandedTo": { $in: recommandedToIds } }  ] } ).lean().exec();
+        return recommands;
+    }
+
+    async getUserRecommandations (recommandedTo: string, limit:number, skip:number){
+        return await this.RecommandModel.find({"recommandedTo": recommandedTo}).limit(limit).skip(skip).sort('-createdAt').lean().exec();
+    }
+
+    async getUserInternshipsByIdList (arr: any){
+        return await this.InternshipModel.find( {"_id": { $in: arr } } ).lean().exec();
     }
 
     async updateInternship(_id:string, internshipObj: any){
@@ -66,12 +89,13 @@ export class InternshipsDataService {
 
     async getAllUsersInternship(userId:string, limit:number, skip:number){
         const internship = await this.InternshipModel.find({"userId":userId}).limit(limit).skip(skip).sort('-createdAt').lean().exec();
-        if(!internship[0]){
-            throw (new NotFoundException("There is no internship of this user"));
-        }
-        else{
-            return internship;
-        }
+        // if(!internship[0]){
+        //     throw (new NotFoundException("There is no internship of this user"));
+        // }
+        // else{
+        //     return internship;
+        // }
+        return internship;
     }
 
     async getInternshipById(_id:String){

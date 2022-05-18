@@ -29,12 +29,18 @@ export const UserSchema = new Schema(
     data: {type: Object},
     forgetPasswordTime:Number,
     forgetPasswordToken:String,
+    jobStats:{
+        applied: {type:Number , default: 0},
+        shortlisted: {type:Number , default: 0},
+        recommanded: {type:Number , default: 0},
+        interviewed: {type:Number , default: 0},
+    },
     socialLogin:[{
         profileId: String,
         userName: String,
         url: String,
         accessToken: String,
-        type: String,
+        socialLoginType: String,
         data: Object
     }]   
 },{ timestamps: true }

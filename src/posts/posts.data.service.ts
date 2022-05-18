@@ -329,27 +329,29 @@ export class PostsDataService {
         .sort('-createdAt')
         .lean()
         .exec();
-        if(postResponses.length > 0){
-            return postResponses;
-        }
-        else{
-            throw (new NotFoundException("Unable to find posts"));
-        }
+        // if(postResponses.length > 0){
+        //     return postResponses;
+        // }
+        // else{
+        //     throw (new NotFoundException("Unable to find posts"));
+        // }
+        return postResponses;
     }
 
     async getInternshipResponses(postId: string, skip:number, limit:number){
-        let postResponses = await this.responseModel.find( { $and: [ {"postId": postId}, { $or: [ {"data.status": "interview"}, {"data.status": "hired"} ] } ] } )
+        let postResponses = await this.responseModel.find( { $and: [ {"postId": postId}, { $or: [ {"data.status": "interviewed"}, {"data.status": "hired"} ] } ] } )
         .limit(limit)
         .skip(skip)
         .sort('-createdAt')
         .lean()
         .exec();
-        if(postResponses.length > 0){
-            return postResponses;
-        }
-        else{
-            throw (new NotFoundException("Unable to find posts"));
-        }
+        // if(postResponses.length > 0){
+        //     return postResponses;
+        // }
+        // else{
+        //     throw (new NotFoundException("Unable to find posts"));
+        // }
+        return postResponses;
     }
     
     async getUserResponses(userId: string, startIndex:number, endIndex:number){

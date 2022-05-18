@@ -141,7 +141,7 @@ import { UsersService } from './user.service';
         // }
         const user:userDTO = await this.usersService.getUserById(req.user._id);
         if(user){
-          user.password = null;
+          user.password = "";
         }
         return user;
       }

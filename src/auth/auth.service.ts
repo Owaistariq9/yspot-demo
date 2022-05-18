@@ -25,6 +25,7 @@ export class AuthService {
                 userType: user.userType
             }
         };
+        user.password = "";
         return {
             token: this.jwtService.sign(userObj),
             userType: user.userType,

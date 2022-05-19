@@ -80,6 +80,9 @@ export class InternshipsController {
         if(!req.body.recommandList){
             throw new BadRequestException("recommandList required!")
         }
+        if(!req.body.recommandList[0]){
+            throw new BadRequestException("recommandList cannot be empty!")
+        }
         let recommands = await this.internshipsService.addRecommands(req.body.recommandList,req.user._id,req.params.internshipId);
         return recommands;
     }

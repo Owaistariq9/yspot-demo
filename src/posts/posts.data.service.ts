@@ -4,7 +4,6 @@ import { Model } from 'mongoose';
 import { Post } from './models/posts.model';
 import { Response } from './models/post.response.model';
 import { UserResponse } from './models/post.userResponse.model';
-import { RpcException } from '@nestjs/microservices';
 
 @Injectable()
 export class PostsDataService {

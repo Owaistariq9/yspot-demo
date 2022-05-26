@@ -66,6 +66,15 @@ export class InternshipsController {
     }
 
     @UseGuards(JwtAuthGuard)
+    @Get("filter/:sort/:industry/:expLevel/:country/:page/:limit")
+    // @MessagePattern("getInternshipsByPage")
+    async getFilteredInternshipsByPage(@Request() req:any){
+        let internships:any = await this.internshipsService.getInternshipByPage(req.params.page,req.params.limit,req.user._id);
+        // console.log("here");
+        return internships;
+    }
+
+    @UseGuards(JwtAuthGuard)
     @Get("/user/:page/:limit")
     // @MessagePattern("getInternshipsByPage")
     async getAllUsersInternships(@Request() req:any){

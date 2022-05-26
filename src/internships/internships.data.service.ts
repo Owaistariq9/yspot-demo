@@ -178,5 +178,19 @@ export class InternshipsDataService {
             return post;
         }
     }
+
+    async getFilteredInternships (industry: string, expLevel: string, country: string, limit: number, skip: number, sort: string){
+        return await this.RecommandModel.find({ $and: [
+            {
+                "industry": industry
+            },
+            {
+                "country": country
+            },
+            {
+                "expLevel": expLevel
+            }
+        ]}).limit(limit).skip(skip).sort(sort).lean().exec();
+    }
     
 }

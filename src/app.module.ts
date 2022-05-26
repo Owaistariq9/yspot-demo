@@ -14,10 +14,10 @@ import { UsersApprovalRequestModule } from './usersApprovalRequest/usersApproval
 import { FollowersModule } from './followers/followers.module';
 import { AuthModule } from './auth/auth.module';
 // dotenv.config();
-
+// mongodb+srv://admin:yspot123@yspot-cluster.xdcqg.mongodb.net/yspot?retryWrites=true&w=majority
 @Module({
-  imports: [
-    MongooseModule.forRoot("mongodb+srv://admin:yspot123@yspot-cluster.xdcqg.mongodb.net/yspot?retryWrites=true&w=majority", {
+  imports: [ 
+    MongooseModule.forRoot("mongodb+srv://admin:yspot123@yspot-development.xdcqg.mongodb.net/yspot?retryWrites=true&w=majority", {
       useNewUrlParser: true,
       useUnifiedTopology: true,
     }),

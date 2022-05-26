@@ -229,6 +229,28 @@ export class InternshipsService {
         return await this.internshipsDataService.getUserInternshipsByIdList(internshipList);
     }
 
+    async getFilteredInternships(industry: string, expLevel: string, country: string, sort:string, page:number, limit:number){
+        const skip = (page - 1) * limit;
+        let filterObj:any = {};
+        let sortBy = "";
+        if(industry !== "0"){
+            filterObj.industry = industry
+        }
+        if(expLevel !== "0"){
+            filterObj.expLevel = expLevel
+        }
+        if(country !== "0"){
+            filterObj.country = country
+        }
+        if(sort === "latest"){
+            sortBy = '-createdAt'
+        }
+        else{
+            sortBy = 'createdAt'
+        }
+        return await this.internshipsDataService.getFilteredInternshipsByObj(filterObj,limit,skip,sortBy);
+    }
+
     // async addResponse(responseObj: any, userId: string){
     //     return await this.postService.addInternshipResponse(responseObj, userId);
     // }

@@ -81,11 +81,7 @@ export class InternshipsService {
     return await this.internshipsDataService.getInternshipById(id);
   }
 
-  async getInternshipByPage(
-    page: number,
-    limit: number,
-    currentUserId: string
-  ) {
+  async getInternshipByPage(page: number, limit: number, currentUserId: string) {
     let skip = (page - 1) * limit;
     let internships = await this.searchService.getAllInternshipDataByPage(
       skip,
@@ -305,7 +301,7 @@ export class InternshipsService {
       internshipList
     );
   }
-    async getFilteredInternships(industry: string, expLevel: string, country: string, sort:string, page:number, limit:number){
+    async getFilteredInternships(industry: string, expLevel: string, country: string, sort: string, page:number, limit:number, currentUserId: string){
         const skip = (page - 1) * limit;
         let filterObj:any = {};
         let sortBy = "";
@@ -324,7 +320,30 @@ export class InternshipsService {
         else{
             sortBy = 'createdAt'
         }
-        return await this.internshipsDataService.getFilteredInternshipsByObj(filterObj,limit,skip,sortBy);
+        let updatedData = []
+        let internships:any = await this.internshipsDataService.getFilteredInternshipsByObj(filterObj,limit,skip,sortBy);
+        for (let i = 0; i < internships.length; i++) {
+            if (!internships[i].userId) {
+              internships[i].userId = "618148168fff748826694e73";
+            }
+            let data = await this.userService.getUserById(
+              internships[i].userId
+            );
+            internships[i].userId = data;
+            let check = await this.postService.getInternshipResponseByUserIdAndPostId(
+              internships[i]._id,
+              currentUserId
+            );
+            if (check) {
+              internships[i].applied = true;
+            } else {
+              internships[i].applied = false;
+            }
+            updatedData.push(internships[i]);
+          }
+        return { internships: updatedData };
+
+        // return await this.internshipsDataService.getFilteredInternshipsByObj(filterObj,limit,skip,sortBy);
     }
 
     async updateInternshipInElasticSearch(internshipId:string){

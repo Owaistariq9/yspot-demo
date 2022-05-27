@@ -179,11 +179,64 @@ export class InternshipsDataService {
         }
     }
 
+    async getAllInternships (){
+        return await this.InternshipModel.find().lean().exec();
+    }
+
+    async getFilteredInternshipsByObj (filterObj:any, limit: number, skip: number, sort: string){
+        return await this.InternshipModel.find(filterObj).limit(limit).skip(skip).sort(sort).lean().exec();
+    }
+
     async getFilteredInternships (industry: string, expLevel: string, country: string, limit: number, skip: number, sort: string){
-        return await this.RecommandModel.find({ $and: [
+        return await this.InternshipModel.find({ $and: [
             {
                 "industry": industry
             },
+            {
+                "country": country
+            },
+            {
+                "expLevel": expLevel
+            }
+        ]}).limit(limit).skip(skip).sort(sort).lean().exec();
+    }
+
+    async getFilteredInternshipsByIndustry (industry: string, limit: number, skip: number, sort: string){
+        return await this.InternshipModel.find({ "industry": industry }).limit(limit).skip(skip).sort(sort).lean().exec();
+    }
+
+    async getFilteredInternshipsByCountry (country: string, limit: number, skip: number, sort: string){
+        return await this.InternshipModel.find({ "country": country }).limit(limit).skip(skip).sort(sort).lean().exec();
+    }
+
+    async getFilteredInternshipsByExperience (expLevel: string, limit: number, skip: number, sort: string){
+        return await this.InternshipModel.find({ "expLevel": expLevel }).limit(limit).skip(skip).sort(sort).lean().exec();
+    }
+
+    async getFilteredInternshipsByIndustryAndCountry (industry: string, country: string, limit: number, skip: number, sort: string){
+        return await this.InternshipModel.find({ $and: [
+            {
+                "industry": industry
+            },
+            {
+                "country": country
+            }
+        ]}).limit(limit).skip(skip).sort(sort).lean().exec();
+    }
+
+    async getFilteredInternshipsByIndustryAndExperience (industry: string, expLevel: string, limit: number, skip: number, sort: string){
+        return await this.InternshipModel.find({ $and: [
+            {
+                "industry": industry
+            },
+            {
+                "expLevel": expLevel
+            }
+        ]}).limit(limit).skip(skip).sort(sort).lean().exec();
+    }
+
+    async getFilteredInternshipsByCountryAndExperience (expLevel: string, country: string, limit: number, skip: number, sort: string){
+        return await this.InternshipModel.find({ $and: [
             {
                 "country": country
             },

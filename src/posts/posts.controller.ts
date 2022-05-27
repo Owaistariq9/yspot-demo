@@ -225,7 +225,7 @@ export class PostsController {
         if(req.user.userClaims.userType === Constants.user){
             return (new UnauthorizedException("Youth not allowed to see responses"));
         }else{
-            return this.postService.updateInternshipResponseStatus(req.params.id,req.params.status, req.body.userId);
+            return this.postService.updateInternshipResponseStatus(req.params.id,req.params.status, req.body._id);
         }
     }
     

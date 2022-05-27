@@ -9,11 +9,14 @@ import { UsersService } from 'src/users/user.service';
 import { PostsDataService } from './posts.data.service';
 import { postDTO, ResponseDTO } from './posts.dto';
 import { PostsType } from './postsTypes.enum';
+import { FCMService } from "src/fcm-provider/fcm.service";
+import { FCM_Message } from 'src/core/constants/constants';
 
 @Injectable()
 export class PostsService {
     // private client: ClientProxy;
     constructor(private readonly postDataService: PostsDataService,
+        private readonly fcmService: FCMService,
         private readonly userService: UsersService,
         private readonly followerService: FollowersService,
         @Inject(forwardRef(() => InternshipsService))
@@ -419,6 +422,16 @@ export class PostsService {
                 responseData = await this.postDataService.insertResponse(responseObj);
                 let internshipData = await this.internshipService.incResponseCountByPostId(responseObj.postId);
                 let userData = await this.userService.incJobAppliedCount(userId);
+                const notification: any = {
+                    Notification:{
+                    data:{},
+                    notification: {
+                      title: FCM_Message.APPLYING_INTERNSHIP().title,
+                      body: FCM_Message.APPLYING_INTERNSHIP().body,
+                    }},
+                    UserId: internshipData.userId,
+                  };
+                await this.fcmService.sendNotification(notification)
             }
         }
         else{
@@ -487,12 +500,35 @@ export class PostsService {
     }
 
     async updateInternshipResponseStatus(_id: string, status: string, userId: string){
+        let notification: any = {}
         if(status === "interviewed"){
             let userData = await this.userService.incJobInterviewCount(userId);
+            notification = {
+                Notification:{
+                data:{},
+                notification: {
+                  title: FCM_Message.UPDATE_INTERVIEW_INTERNSHIP_STATUS().title,
+                  body: FCM_Message.UPDATE_INTERVIEW_INTERNSHIP_STATUS().body,
+                }},
+                UserId: userId,
+              };
         }
         if(status === "hired"){
             let userData = await this.userService.incJobShortlistCount(userId);
+            notification = {
+                Notification:{
+                data:{},
+                notification: {
+                  title: FCM_Message.UPDATE_INTERVIEW_INTERNSHIP_STATUS().title,
+                  body: FCM_Message.UPDATE_INTERVIEW_INTERNSHIP_STATUS().body,
+                }},
+                UserId: userId,
+              };
         }
+      
+          console.log(userId,'userId')
+        await this.fcmService.sendNotification(notification)
+
         return await this.postDataService.updateInternshipResponseStatus(_id, status);
     }
 

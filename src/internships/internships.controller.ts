@@ -1,4 +1,4 @@
-import { BadRequestException, Body, Controller, Delete, Get, Patch, Post, Request, UseGuards } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Delete, Get, Patch, Post, Put, Request, UseGuards } from '@nestjs/common';
 import { MessagePattern, Payload, RpcException } from '@nestjs/microservices';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { Constants } from 'src/core/constants/constants';
@@ -60,7 +60,7 @@ export class InternshipsController {
     @Get(":page/:limit")
     // @MessagePattern("getInternshipsByPage")
     async getInternshipsByPage(@Request() req:any){
-        let internships:any = await this.internshipsService.getInternshipByPage(req.params.page,req.params.limit,req.user._id);
+        const internships:any = await this.internshipsService.getInternshipByPage(req.params.page,req.params.limit,req.user._id);
         return internships;
     }
 
@@ -68,7 +68,7 @@ export class InternshipsController {
     @UseGuards(JwtAuthGuard)
     @Get("filter/:sort/:industry/:expLevel/:country/:page/:limit")
     async getFilteredInternshipsByPage(@Request() req:any){
-        let internships:any = await this.internshipsService.getFilteredInternships(req.params.industry, req.params.expLevel, req.params.country, req.params.sort, req.params.page, req.params.limit);
+        const internships:any = await this.internshipsService.getFilteredInternships(req.params.industry, req.params.expLevel, req.params.country, req.params.sort, req.params.page, req.params.limit);
         return {"internships": internships};
     }
 
@@ -90,7 +90,7 @@ export class InternshipsController {
         if(!req.body.recommandList[0]){
             throw new BadRequestException("recommandList cannot be empty!")
         }
-        let recommands = await this.internshipsService.addRecommands(req.body.recommandList,req.user._id,req.params.internshipId);
+        const recommands = await this.internshipsService.addRecommands(req.body.recommandList,req.user._id,req.params.internshipId);
         return recommands;
     }
 
@@ -98,8 +98,16 @@ export class InternshipsController {
     @Get("recommanded/:page/:limit")
     // @MessagePattern("addRecommand")
     async getAllRecommandedInternships(@Request() req:any){
-        let recommands = await this.internshipsService.getRecommandedInternships(req.user._id,req.params.page,req.params.limit);
+        const recommands = await this.internshipsService.getRecommandedInternships(req.user._id,req.params.page,req.params.limit);
         return {"recommandedTnternships": recommands};
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Put(":internshipId/elastic")
+    // @MessagePattern("addRecommand")
+    async updateInternshipInElasticSearch(@Request() req:any){
+        const internship = await this.internshipsService.updateInternshipInElasticSearch(req.params.internshipId);
+        return {"UpdatedInternship": internship};
     }
 
     // @MessagePattern("submitInternshipResponse")

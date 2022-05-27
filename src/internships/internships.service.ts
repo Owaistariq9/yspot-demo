@@ -251,6 +251,17 @@ export class InternshipsService {
         return await this.internshipsDataService.getFilteredInternshipsByObj(filterObj,limit,skip,sortBy);
     }
 
+    async updateInternshipInElasticSearch(internshipId:string){
+        const internship = await this.internshipsDataService.getInternshipById(internshipId);
+        const esData = await this.searchService.updateInternshipData(internshipId, internship);
+        if(!internship){
+            throw (new NotFoundException("There is no internship with this id"));
+        }
+        else{
+            return internship;
+        }
+    }
+
     // async addResponse(responseObj: any, userId: string){
     //     return await this.postService.addInternshipResponse(responseObj, userId);
     // }

@@ -219,10 +219,13 @@ export class PostsController {
     @Patch('/response/:id/:status')
     // @MessagePattern("getPostResponses")
     async updateInternshipResponseStatus(@Request() req:any){
+        if(!req.body.userId){
+            return (new BadRequestException("userId Required!"));
+        }
         if(req.user.userClaims.userType === Constants.user){
             return (new UnauthorizedException("Youth not allowed to see responses"));
         }else{
-            return this.postService.updateInternshipResponseStatus(req.params.id,req.params.status, req.user._id);
+            return this.postService.updateInternshipResponseStatus(req.params.id,req.params.status, req.body.userId);
         }
     }
     

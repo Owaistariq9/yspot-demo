@@ -526,7 +526,6 @@ export class PostsService {
               };
         }
       
-          console.log(userId,'userId')
         await this.fcmService.sendNotification(notification)
 
         return await this.postDataService.updateInternshipResponseStatus(_id, status);

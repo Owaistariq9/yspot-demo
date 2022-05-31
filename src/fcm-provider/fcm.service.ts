@@ -36,7 +36,6 @@ export class FCMService {
       .messaging()
       .sendMulticast(message)
          .then((response) => {
-           console.log(response,'response')
           console.log('messages were sent successfully');
        
        }).catch((err)=>{
@@ -45,7 +44,6 @@ export class FCMService {
     }catch(err){
       console.log('try',err,'try err')
     }
-      console.log(failedTokens,'failedTokens')
   }
 
   // sends notification to request.UserId or request.Topics
@@ -65,7 +63,6 @@ export class FCMService {
         let result = await firebaseAdmin
         .messaging()
         .sendToDevice(recipients, request.Notification);
-        console.log(result)
       }
       console.log(`Send User Count ${recipients.length}`)
    console.log("********** NOTIFICATION SEND COMPLETED**************")

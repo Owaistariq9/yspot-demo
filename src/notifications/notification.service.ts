@@ -53,7 +53,7 @@ export class NotificationsService {
   async getUsersTokens(userId: string[]) :Promise<string[]>{
     try{
       const user = await this.usersDataService.getUsersTokens(userId);
-      return user
+      return [...new Set(user)] as string[]
     }
     catch(err){
       return err

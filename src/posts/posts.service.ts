@@ -519,8 +519,8 @@ export class PostsService {
                 Notification:{
                 data:{},
                 notification: {
-                  title: FCM_Message.UPDATE_INTERVIEW_INTERNSHIP_STATUS().title,
-                  body: FCM_Message.UPDATE_INTERVIEW_INTERNSHIP_STATUS().body,
+                  title: FCM_Message.UPDATE_HIRED_INTERNSHIP_STATUS().title,
+                  body: FCM_Message.UPDATE_HIRED_INTERNSHIP_STATUS().body,
                 }},
                 UserId: userId,
               };

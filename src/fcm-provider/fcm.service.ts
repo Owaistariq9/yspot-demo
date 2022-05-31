@@ -60,6 +60,7 @@ export class FCMService {
 
       if (user && user.notificationTokens && user.notificationTokens.length > 0) {
         recipients = user.notificationTokens.map((x) => x.deviceId);
+        recipients = [...new Set(recipients)] as string[]
         let result = await firebaseAdmin
         .messaging()
         .sendToDevice(recipients, request.Notification);

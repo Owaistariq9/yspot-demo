@@ -33,7 +33,7 @@ export class CommentsDataService {
     }
 
     async getCommentsByPostIdAndPage(postId:String,startIndex:number,endIndex:number){
-        const comments = await this.commentModel.findOne({ postId: postId }).slice('comment',[startIndex,endIndex])
+        const comments = await this.commentModel.findOne({ postId: postId }).slice("comment",[+startIndex,+endIndex]).lean().exec();
         if(!comments){
             return null
         }

@@ -10,7 +10,7 @@ export class UsersDataService {
     @InjectModel('User') private readonly userModel: Model<User>
   ) {}
 
-  async singup(profilePicture: string, fullName: string, email: string, password: string, phone: string, userType:string) {
+  async singup(profilePicture: string, fullName: string, email: string, password: string, phone: string, gender:string, userType:string) {
     try{
       const newUser = new this.userModel({
           profilePicture,
@@ -18,6 +18,7 @@ export class UsersDataService {
           email,
           password,
           phone,
+          gender,
           userType
         });
         const result = await newUser.save();

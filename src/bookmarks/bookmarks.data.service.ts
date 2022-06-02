@@ -23,11 +23,12 @@ export class BookmarksDataService {
     }
   }
 
-  async createBookMark(userId: string, postId: string) {
+  async createBookMark(userId: string, postId: string, postType: string) {
     try {
       const userBookmarkExist = new this.bookmarkModel({
         userId,
         postId,
+        postType
       });
 
       await userBookmarkExist.save();
@@ -56,12 +57,9 @@ export class BookmarksDataService {
     limit: number,
   ) {
     try {
-
-
       const userBookmarksWithPagination = await this.bookmarkModel
-        .find({
-          userId,
-        })
+        .find({"userId":userId})
+        .populate({path:'postId',model:"Internships"})
         .limit(limit)
         .skip(skip)
         .sort('-createdAt')

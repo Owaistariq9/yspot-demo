@@ -94,7 +94,6 @@ export class SearchService {
 
     async updateInternshipData (internshipId:string, data: any){
         delete data._id;
-        console.log(data);
         let esData: any = await this.searchService.update({
             index: "internships",
             id: internshipId,

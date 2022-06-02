@@ -68,7 +68,6 @@ async getNotificationByEmail(email: string) {
 
 async pushNotificationTokens(userId:String, notificationTokens:any):Promise<boolean>{
   const result = await this.notificationModel.findOneAndUpdate({userId:userId},{$push:{notificationTokens:notificationTokens}},{new:true}).lean().exec();
-  console.log(result,'result')
   if(!result){
     return false
   }

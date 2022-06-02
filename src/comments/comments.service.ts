@@ -45,7 +45,7 @@ export class CommentsService {
     async updateCommentByPostId(postId:String, commentObj:any){
         const comments:any = await this.commentsDataService.updateCommentByPostId(postId,commentObj);
         if(!comments){
-            throw new RpcException(new NotFoundException("There is no comments for this post"));
+            throw (new NotFoundException("There is no comments for this post"));
         }
         else{
             return comments.comment[comments.comment.length - 1];
@@ -55,7 +55,7 @@ export class CommentsService {
     async updateUserComment(postId:String, commentObj:any){
         const comments:any = await this.commentsDataService.updateUserComment(postId,commentObj);
         if(!comments){
-            throw new RpcException(new NotFoundException("There is no comments for this post"));
+            throw (new NotFoundException("There is no comments for this post"));
         }
         else{
             return comments.comment[comments.comment.length - 1];
@@ -65,7 +65,7 @@ export class CommentsService {
     async deleteComment(postId:String, commentId:String){
         const comments = await this.commentsDataService.deleteComment(postId,commentId);
         if(!comments){
-            throw new RpcException(new NotFoundException("There is no comments for this post"));
+            throw (new NotFoundException("There is no comments for this post"));
         }
         else{
             return "Comment deleted.";

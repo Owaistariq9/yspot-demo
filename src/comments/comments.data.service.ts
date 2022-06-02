@@ -45,27 +45,27 @@ export class CommentsDataService {
     async updateCommentByPostId(postId:String, commentObj:any){
         const comments = await this.commentModel.findOneAndUpdate(postId,{$push:{comment:commentObj}},{new:true}).lean().exec();
         if(!comments){
-            throw new RpcException(new NotFoundException("There is no comments for this post"));
+            throw (new NotFoundException("There is no comments for this post"));
         }
         else{
-            return comments.comment[comments.comment.length - 1];
+            return comments;
         }
     }
 
     async updateUserComment(postId:String, commentObj:any){
         const comments = await this.commentModel.findOneAndUpdate({postId:postId, "comment._id":commentObj._id},{$set:{"comment.$":commentObj}},{new:true}).lean().exec();
         if(!comments){
-            throw new RpcException(new NotFoundException("There is no comments for this post"));
+            throw (new NotFoundException("There is no comments for this post"));
         }
         else{
-            return comments.comment[comments.comment.length - 1];
+            return comments;
         }
     }
 
     async deleteComment(postId:String, commentId:String){
         const comments = await this.commentModel.findOneAndUpdate({postId:postId},{$pull: {"comment": { _id : commentId }}}).lean().exec();
         if(!comments){
-            throw new RpcException(new NotFoundException("There is no comments for this post"));
+            throw (new NotFoundException("There is no comments for this post"));
         }
         else{
             return "Comment deleted.";

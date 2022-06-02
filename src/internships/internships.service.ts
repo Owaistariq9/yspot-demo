@@ -183,8 +183,7 @@ export class InternshipsService {
   }
 
   async incCommentCountByPostId(postId: String) {
-    const post =
-      await this.internshipsDataService.incCommentCountByInternshipId(postId);
+    const post = await this.internshipsDataService.incCommentCountByInternshipId(postId);
     const espost = await this.searchService.updateInternshipData(
       post._id,
       post

@@ -27,7 +27,7 @@ export class InternshipsController {
     // @MessagePattern("deleteInternship")
     async deleteInternship(@Request() req:any){
         if(req.user.userClaims.userType !== Constants.business){
-            throw new BadRequestException("Only business account can add internships");
+            throw new BadRequestException("Only business account can delete internships");
         }
         let userId = req.user._id;
         let internship = await this.internshipsService.getInternshipById(req.params.internshipId);

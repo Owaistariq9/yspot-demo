@@ -41,7 +41,7 @@ async getUserByEmail(email: string) {
 
 async getUserPasswordByEmail(email: string) {
   try{
-    const user = await this.userModel.findOne({ email: email }).select('password').lean().exec();
+    const user = await this.userModel.findOne({ email: email }).select('+password').lean().exec();
     return user
   }
   catch(err){

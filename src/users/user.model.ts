@@ -5,7 +5,7 @@ export const UserSchema = new Schema(
 {
     fullName: String,
     email:String,
-    password:String,
+    password: { type: String, select: false },
     age:{ type: Number, default: 0},
     gender:{ type: String, default: ""},
     phone:{ type: String, default: ""},

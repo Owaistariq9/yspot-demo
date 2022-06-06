@@ -59,7 +59,8 @@ export class BookmarksDataService {
     try {
       const userBookmarksWithPagination = await this.bookmarkModel
         .find({"userId":userId})
-        .populate({path:'postId',model:"Internships"})
+        .populate([{path:'postId',model:"Internships"}, {path:'userId',model:"User"}])
+        // .populate({path:'userId',model:"users"})
         .limit(limit)
         .skip(skip)
         .sort('-createdAt')

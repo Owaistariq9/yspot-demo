@@ -51,6 +51,14 @@ export class UsersService {
       return user
   }
 
+  async getUserPasswordByEmail(email: string) {
+    const user = await this.usersDataService.getUserPasswordByEmail(email);
+    if(!user){
+      return null
+    }
+    return user
+}
+
   async getUserById(id: string) {
     try{
       const user = await this.usersDataService.getUserById(id);

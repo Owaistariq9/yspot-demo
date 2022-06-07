@@ -10,9 +10,11 @@ import { SearchModule } from 'src/search/search.module';
 import { UserModule } from 'src/users/user.module';
 import { FollowersModule } from 'src/followers/followers.module';
 import { InternshipsModule } from 'src/internships/internships.module';
+import { FCMProviderModule } from 'src/fcm-provider/fcm.module';
 
 @Module({
   imports: [
+    FCMProviderModule,
     SearchModule,
     UserModule,
     FollowersModule,

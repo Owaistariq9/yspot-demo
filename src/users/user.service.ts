@@ -12,7 +12,7 @@ export class UsersService {
     private readonly usersDataService: UsersDataService
   ) {}
 
-  async singup(profilePicture: string, fullName: string, email: string, password: string, phone: string, userType:string) {
+  async singup(profilePicture: string, fullName: string, email: string, password: string, phone: string, gender: string, userType:string) {
       try{
         if(!userType){
           userType = "youth";
@@ -22,6 +22,7 @@ export class UsersService {
           email,
           password,
           phone,
+          gender,
           userType)
           return newUser;
       }
@@ -49,6 +50,14 @@ export class UsersService {
       }
       return user
   }
+
+  async getUserPasswordByEmail(email: string) {
+    const user = await this.usersDataService.getUserPasswordByEmail(email);
+    if(!user){
+      return null
+    }
+    return user
+}
 
   async getUserById(id: string) {
     try{

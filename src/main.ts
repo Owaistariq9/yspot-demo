@@ -5,6 +5,7 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 // import { ExceptionFilter } from './exception.filter';
 import { AllExceptionsFilter } from './http-exception.filter';
+import * as firebaseAdmin from 'firebase-admin';
 
 // const microserviceOptions = {
 //   transport: Transport.TCP,
@@ -21,6 +22,20 @@ import { AllExceptionsFilter } from './http-exception.filter';
 // }
 
 async function Localbootstrap() {
+  let firebaseConfig:any  = {
+    apiKey: "AIzaSyAp2YHtgKStVVGH9d6e4p2XwXtarHsFdyU",
+    authDomain: "yspot-a72f2.firebaseapp.com",
+    projectId: "yspot-a72f2",
+    storageBucket: "yspot-a72f2.appspot.com",
+    messagingSenderId: "920595787966",
+    appId: "1:920595787966:web:f8c45097096c92a7a8aeef",
+    measurementId: "G-JKKMEVD51L" 
+  }
+  firebaseAdmin.initializeApp({
+    credential: firebaseAdmin.credential.cert(
+      "yspot-firebase.json",
+    ),
+  }); 
   const app = await NestFactory.create(AppModule);
   app.useGlobalPipes(new ValidationPipe({
     transform: true,

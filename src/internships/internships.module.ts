@@ -8,9 +8,10 @@ import { InternshipsSchema } from './models/internships.model';
 import { InternshipsService } from './internships.service';
 import { RecommandsSchema } from './models/recommands.model';
 import { UserModule } from 'src/users/user.module';
+import { FCMProviderModule } from 'src/fcm-provider/fcm.module';
 
 @Module({
-  imports: [MongooseModule.forFeature([{name:'Internships', schema:InternshipsSchema, collection:'internships'}]),
+  imports: [FCMProviderModule,MongooseModule.forFeature([{name:'Internships', schema:InternshipsSchema, collection:'internships'}]),
   MongooseModule.forFeature([{name:'Recommands', schema:RecommandsSchema, collection:'recommands'}]),
 // PostsModule,
 forwardRef(() => PostsModule),

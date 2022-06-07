@@ -65,6 +65,7 @@ export class AuthController {
              user.email,
              encryptedPassword,
              user.phone,
+             user.gender,
              user.userType
            );
            let reqObj = {

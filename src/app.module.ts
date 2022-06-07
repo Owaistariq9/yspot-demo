@@ -13,15 +13,19 @@ import { UserModule } from './users/user.module';
 import { UsersApprovalRequestModule } from './usersApprovalRequest/usersApprovalRequest.module';
 import { FollowersModule } from './followers/followers.module';
 import { AuthModule } from './auth/auth.module';
+import { NotificationModule } from './notifications/notification.module';
+import { FCMProviderModule } from './fcm-provider/fcm.module';
 // dotenv.config();
-
+// mongodb+srv://admin:yspot123@yspot-cluster.xdcqg.mongodb.net/yspot?retryWrites=true&w=majority
 @Module({
   imports: [
-    MongooseModule.forRoot("mongodb+srv://admin:yspot123@yspot-cluster.xdcqg.mongodb.net/yspot?retryWrites=true&w=majority", {
+    MongooseModule.forRoot("mongodb+srv://admin:yspot123@yspot-development.xdcqg.mongodb.net/yspot?retryWrites=true&w=majority", {
       useNewUrlParser: true,
       useUnifiedTopology: true,
     }),
     AuthModule,
+    FCMProviderModule,
+    NotificationModule,
     UserModule,
     InternshipsModule,
     PostsModule,

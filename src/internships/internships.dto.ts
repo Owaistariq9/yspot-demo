@@ -43,6 +43,10 @@ export class internshipDTO {
     @IsDefined()
     @IsNumber()
     endSalary:Number= 0; 
+    @IsNotEmpty()
+    @IsDefined()
+    @IsString()
+    expLevel:String = "";
     @IsNumber()
     commentsCount:Number= 0;
     @IsNumber()
@@ -90,6 +94,8 @@ export class updateInternshipDTO {
     startSalary:Number= 0; 
     @IsNumber()
     endSalary:Number= 0; 
+    @IsString()
+    expLevel:String = "";
     @IsNumber()
     commentsCount:Number= 0;
     @IsNumber()

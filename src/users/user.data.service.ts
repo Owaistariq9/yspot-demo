@@ -10,7 +10,7 @@ export class UsersDataService {
     @InjectModel('User') private readonly userModel: Model<User>
   ) {}
 
-  async singup(profilePicture: string, fullName: string, email: string, password: string, phone: string, userType:string) {
+  async singup(profilePicture: string, fullName: string, email: string, password: string, phone: string, gender:string, userType:string) {
     try{
       const newUser = new this.userModel({
           profilePicture,
@@ -18,6 +18,7 @@ export class UsersDataService {
           email,
           password,
           phone,
+          gender,
           userType
         });
         const result = await newUser.save();
@@ -36,6 +37,16 @@ async getUserByEmail(email: string) {
     catch(err){
       return err
     }
+}
+
+async getUserPasswordByEmail(email: string) {
+  try{
+    const user = await this.userModel.findOne({ email: email }).select('+password').lean().exec();
+    return user
+  }
+  catch(err){
+    return err
+  }
 }
 
 async getUserById(id: string) {

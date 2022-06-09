@@ -24,6 +24,7 @@ export class CommentsDataService {
 
     async getCommentsByPostId(postId:String){
         const comments = await this.commentModel.findOne({ postId: postId }).lean().exec();
+        console.log(comments);
         if(!comments){
             return null
         }
@@ -43,7 +44,8 @@ export class CommentsDataService {
     }
 
     async updateCommentByPostId(postId:String, commentObj:any){
-        const comments = await this.commentModel.findOneAndUpdate(postId,{$push:{comment:commentObj}},{new:true}).lean().exec();
+        console.log(postId, commentObj);
+        const comments = await this.commentModel.findOneAndUpdate( { 'postId': postId }, { $push: { comment: commentObj } },{new:true}).lean().exec();
         if(!comments){
             throw (new NotFoundException("There is no comments for this post"));
         }

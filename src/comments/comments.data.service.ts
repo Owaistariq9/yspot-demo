@@ -44,7 +44,6 @@ export class CommentsDataService {
     }
 
     async updateCommentByPostId(postId:String, commentObj:any){
-        console.log(postId, commentObj);
         const comments = await this.commentModel.findOneAndUpdate( { 'postId': postId }, { $push: { comment: commentObj } },{new:true}).lean().exec();
         if(!comments){
             throw (new NotFoundException("There is no comments for this post"));

@@ -36,7 +36,7 @@ export class BookmarksService {
       if (userBookmark) {
         await this.bookmarkDataService.deleteBookMark(userId, postId);
 
-        return 'bookmark removed';
+        return { message: 'bookmark removed' };
       } else {
         const bookmark = await this.bookmarkDataService.createBookMark(
           userId,

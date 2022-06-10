@@ -9,14 +9,19 @@ import { InternshipsService } from './internships.service';
 import { RecommandsSchema } from './models/recommands.model';
 import { UserModule } from 'src/users/user.module';
 import { FCMProviderModule } from 'src/fcm-provider/fcm.module';
+import { BookmarksModule } from 'src/bookmarks/bookmarks.module';
 
 @Module({
-  imports: [FCMProviderModule,MongooseModule.forFeature([{name:'Internships', schema:InternshipsSchema, collection:'internships'}]),
+  imports: [MongooseModule.forFeature([{name:'Internships', schema:InternshipsSchema, collection:'internships'}]),
   MongooseModule.forFeature([{name:'Recommands', schema:RecommandsSchema, collection:'recommands'}]),
 // PostsModule,
 forwardRef(() => PostsModule),
+// BookmarksModule,
+forwardRef(() => BookmarksModule),
 UserModule,
-SearchModule],
+SearchModule,
+FCMProviderModule
+],
   controllers: [InternshipsController],
   providers: [InternshipsService,InternshipsDataService],
   exports: [InternshipsService,InternshipsDataService],

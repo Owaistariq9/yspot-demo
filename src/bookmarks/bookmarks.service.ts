@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { forwardRef, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { lastValueFrom } from 'rxjs';
 import { PostsService } from '../posts/posts.service';
 import { RpcException } from '@nestjs/microservices';
@@ -9,9 +9,13 @@ import { Constants } from 'src/core/constants/constants';
 @Injectable()
 export class BookmarksService {
   constructor(
-    private readonly postsService: PostsService,
-    private readonly internshipsService: InternshipsService,
     private readonly bookmarkDataService: BookmarksDataService,
+    // private readonly postsService: PostsService,
+    @Inject(forwardRef(() => PostsService))
+    private readonly postsService: PostsService,
+    // private readonly internshipsService: InternshipsService,
+    @Inject(forwardRef(() => InternshipsService))
+    private readonly internshipsService: InternshipsService,
   ) {}
 
   async toggleBookmark(userId:string, postId:string, postType:string) {
@@ -70,5 +74,9 @@ export class BookmarksService {
     } catch (err) {
       return err;
     }
+  }
+
+  async checkUserBookmark (userId: string, postId: string){
+    return await this.bookmarkDataService.isUserBookmarkExist(userId, postId);
   }
 }

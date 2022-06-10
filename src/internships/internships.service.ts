@@ -10,6 +10,7 @@ import {
   RpcException,
   Transport,
 } from "@nestjs/microservices";
+import { BookmarksService } from "src/bookmarks/bookmarks.service";
 import { FCM_Message } from "src/core/constants/constants";
 import { FCMService } from "src/fcm-provider/fcm.service";
 import { PostsService } from "src/posts/posts.service";
@@ -26,7 +27,9 @@ export class InternshipsService {
     private readonly searchService: SearchService,
     private readonly userService: UsersService,
     @Inject(forwardRef(() => PostsService))
-    private readonly postService: PostsService
+    private readonly postService: PostsService,
+    @Inject(forwardRef(() => BookmarksService))
+    private readonly bookmarkService: BookmarksService
   ) // private readonly postService: PostsService
   {
     // this.authService = ClientProxyFactory.create({
@@ -88,34 +91,10 @@ export class InternshipsService {
       limit
     );
     let updatedData = [];
-    // await internships.forEach( async val => {
-    //     console.log(val._source);
-    //     let data = this.authService.send<any>('profile',val._source.data.userId);
-    //     await data.forEach(y => {
-    //         val._source.data.userId = y;
-    //         updatedData.push(y);
-    //         console.log("user data", val._source.data.userId)
-    //     })
-    // });
-    // let data = this.authService.send<any>('profile',internships[0]._source.data.userId);
-    //     await data.forEach(y => {
-    //         internships[0]._source.data.userId = y;
-    //         updatedData.push(y);
-    //         console.log("user data", internships[0]._source.data.userId)
-    //     })
-    // let data = await this.getUserDataFromAuthService(internships[0]._source.data.userId);
-    // await internships.forEach (async val => {
-    //     let data = await this.getUserDataFromAuthService(val._source.data.userId);
-    //     console.log("here",data);
-    //     updatedData.push(data);
-    // })
-    // console.log(internships);
-    // console.log("updatedData",updatedData);
-    // let newData = await this.internshipArray(internships);
     for (let i = 0; i < internships.length; i++) {
-      if (!internships[i]._source.data.userId) {
-        internships[i]._source.data.userId = "618148168fff748826694e73";
-      }
+      // if (!internships[i]._source.data.userId) {
+      //   internships[i]._source.data.userId = "618148168fff748826694e73";
+      // }
       let data = await this.userService.getUserById(
         internships[i]._source.data.userId
       );
@@ -128,6 +107,12 @@ export class InternshipsService {
         internships[i]._source.data.applied = true;
       } else {
         internships[i]._source.data.applied = false;
+      }
+      let bookmarkCheck = await this.bookmarkService.checkUserBookmark(currentUserId, internships[i]._id);
+      if (bookmarkCheck) {
+        internships[i]._source.data.isBookmarked = true;
+      } else {
+        internships[i]._source.data.isBookmarked = false;
       }
       updatedData.push(internships[i]._source.data);
     }
@@ -322,9 +307,9 @@ export class InternshipsService {
         let updatedData = []
         let internships:any = await this.internshipsDataService.getFilteredInternshipsByObj(filterObj,limit,skip,sortBy);
         for (let i = 0; i < internships.length; i++) {
-            if (!internships[i].userId) {
-              internships[i].userId = "618148168fff748826694e73";
-            }
+            // if (!internships[i].userId) {
+            //   internships[i].userId = "618148168fff748826694e73";
+            // }
             let data = await this.userService.getUserById(
               internships[i].userId
             );
@@ -337,6 +322,12 @@ export class InternshipsService {
               internships[i].applied = true;
             } else {
               internships[i].applied = false;
+            }
+            let bookmarkCheck = await this.bookmarkService.checkUserBookmark(currentUserId, internships[i]._id);
+            if (bookmarkCheck) {
+              internships[i]._source.data.isBookmarked = true;
+            } else {
+              internships[i]._source.data.isBookmarked = false;
             }
             updatedData.push(internships[i]);
           }

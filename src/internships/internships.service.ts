@@ -86,37 +86,24 @@ export class InternshipsService {
 
   async getInternshipByPage(page: number, limit: number, currentUserId: string) {
     let skip = (page - 1) * limit;
-    let internships = await this.searchService.getAllInternshipDataByPage(
-      skip,
-      limit
-    );
-    let updatedData = [];
-    for (let i = 0; i < internships.length; i++) {
-      // if (!internships[i]._source.data.userId) {
-      //   internships[i]._source.data.userId = "618148168fff748826694e73";
-      // }
-      let data = await this.userService.getUserById(
-        internships[i]._source.data.userId
-      );
-      internships[i]._source.data.userId = data;
-      let check = await this.postService.getInternshipResponseByUserIdAndPostId(
-        internships[i]._id,
-        currentUserId
-      );
-      if (check) {
-        internships[i]._source.data.applied = true;
-      } else {
-        internships[i]._source.data.applied = false;
-      }
-      let bookmarkCheck = await this.bookmarkService.checkUserBookmark(currentUserId, internships[i]._id);
-      if (bookmarkCheck) {
-        internships[i]._source.data.isBookmarked = true;
-      } else {
-        internships[i]._source.data.isBookmarked = false;
-      }
-      updatedData.push(internships[i]._source.data);
-    }
-    return { internships: updatedData };
+    const internships:any = await this.internshipsDataService.getFilteredInternshipsByObj({}, limit, skip, '-createdAt');
+    const postIds = [];
+
+    internships.forEach(x => {
+      postIds.push(x._id);
+      x.isBookmarked = false;
+    });
+
+    const check = await this.bookmarkService.checkUserBookmark(currentUserId, postIds);
+
+    internships.forEach(x => {
+      check.forEach(y => {
+        if(y.postId.toString() === x._id.toString()){
+          x.isBookmarked = true;
+        }
+      });
+    });
+    return { internships: internships };
   }
 
   async getUsersInternshipByPage(page: number, limit: number, userId: string) {
@@ -304,36 +291,24 @@ export class InternshipsService {
         else{
             sortBy = 'createdAt'
         }
-        let updatedData = []
-        let internships:any = await this.internshipsDataService.getFilteredInternshipsByObj(filterObj,limit,skip,sortBy);
-        for (let i = 0; i < internships.length; i++) {
-            // if (!internships[i].userId) {
-            //   internships[i].userId = "618148168fff748826694e73";
-            // }
-            let data = await this.userService.getUserById(
-              internships[i].userId
-            );
-            internships[i].userId = data;
-            let check = await this.postService.getInternshipResponseByUserIdAndPostId(
-              internships[i]._id,
-              currentUserId
-            );
-            if (check) {
-              internships[i].applied = true;
-            } else {
-              internships[i].applied = false;
-            }
-            let bookmarkCheck = await this.bookmarkService.checkUserBookmark(currentUserId, internships[i]._id);
-            if (bookmarkCheck) {
-              internships[i].isBookmarked = true;
-            } else {
-              internships[i].isBookmarked = false;
-            }
-            updatedData.push(internships[i]);
-          }
-        return { internships: updatedData };
+        const postIds = [];
+        const internships:any = await this.internshipsDataService.getFilteredInternshipsByObj(filterObj, limit, skip, sortBy);
 
-        // return await this.internshipsDataService.getFilteredInternshipsByObj(filterObj,limit,skip,sortBy);
+        internships.forEach(x => {
+          postIds.push(x._id);
+          x.isBookmarked = false;
+        });
+
+        const check = await this.bookmarkService.checkUserBookmark(currentUserId, postIds);
+
+        internships.forEach(x => {
+          check.forEach(y => {
+            if(y.postId.toString() === x._id.toString()){
+              x.isBookmarked = true;
+            }
+          });
+        });
+        return { internships: internships };
     }
 
     async updateInternshipInElasticSearch(internshipId:string){
@@ -347,11 +322,14 @@ export class InternshipsService {
         }
     }
 
-    // async addResponse(responseObj: any, userId: string){
-    //     return await this.postService.addInternshipResponse(responseObj, userId);
-    // }
-
-  // async addResponse(responseObj: any, userId: string){
-  //     return await this.postService.addInternshipResponse(responseObj, userId);
-  // }
+    async getInternshipDataById(internshipId: string, currentUserId:string) {
+      const internship: any = await this.internshipsDataService.getInternshipDataById(internshipId);
+      const check = await this.postService.getInternshipResponseByUserIdAndPostId(internshipId, currentUserId);
+      if (check) {
+        internship.applied = true;
+      } else {
+        internship.applied = false;
+      }
+      return internship;
+    }
 }

@@ -108,6 +108,16 @@ export class InternshipsDataService {
         }
     }
 
+    async getInternshipDataById(_id:String){
+        const internship = await this.InternshipModel.findById(_id).populate({path: 'userId', model: 'User'}).lean().exec();
+        if(!internship){
+            throw (new NotFoundException("Invalid internshipId"));
+        }
+        else{
+            return internship;
+        }
+    }
+
     async incCommentCountByInternshipId(internshipId:String){
         const post = await this.InternshipModel.findOneAndUpdate({"_id": internshipId}, {$inc :{'commentsCount':1}},{new:true}).lean().exec();
         if(!post){
@@ -184,7 +194,7 @@ export class InternshipsDataService {
     }
 
     async getFilteredInternshipsByObj (filterObj:any, limit: number, skip: number, sort: string){
-        return await this.InternshipModel.find(filterObj).limit(limit).skip(skip).sort(sort).lean().exec();
+        return await this.InternshipModel.find(filterObj).limit(limit).skip(skip).sort(sort).populate({path: 'userId', model: 'User'}).lean().exec();
     }
 
     async getFilteredInternships (industry: string, expLevel: string, country: string, limit: number, skip: number, sort: string){

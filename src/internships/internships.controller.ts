@@ -56,6 +56,14 @@ export class InternshipsController {
         return updatedPost;
     }
 
+    
+    @UseGuards(JwtAuthGuard)
+    @Get(":internshipId")
+    async getInternshipById(@Request() req:any){
+        const internship = await this.internshipsService.getInternshipDataById(req.params.internshipId, req.user._id);
+        return {"Internship": internship};
+    }
+
     @UseGuards(JwtAuthGuard)
     @Get(":page/:limit")
     // @MessagePattern("getInternshipsByPage")

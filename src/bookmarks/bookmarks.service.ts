@@ -76,7 +76,7 @@ export class BookmarksService {
     }
   }
 
-  async checkUserBookmark (userId: string, postId: string){
-    return await this.bookmarkDataService.isUserBookmarkExist(userId, postId);
+  async checkUserBookmark (userId: string, postIds: any){
+    return await this.bookmarkDataService.checkUsersBookmarks(userId, postIds);
   }
 }

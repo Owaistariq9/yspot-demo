@@ -325,9 +325,9 @@ export class InternshipsService {
             }
             let bookmarkCheck = await this.bookmarkService.checkUserBookmark(currentUserId, internships[i]._id);
             if (bookmarkCheck) {
-              internships[i]._source.data.isBookmarked = true;
+              internships[i].isBookmarked = true;
             } else {
-              internships[i]._source.data.isBookmarked = false;
+              internships[i].isBookmarked = false;
             }
             updatedData.push(internships[i]);
           }

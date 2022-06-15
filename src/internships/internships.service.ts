@@ -272,24 +272,22 @@ export class InternshipsService {
       internshipList
     );
   }
-    async getFilteredInternships(industry: string, expLevel: string, country: string, sort: string, page:number, limit:number, currentUserId: string){
+    async getFilteredInternships(industry: string, isPaid: boolean, country: string, sort: string, page:number, limit:number, currentUserId: string){
         const skip = (page - 1) * limit;
         let filterObj:any = {};
         let sortBy = "";
+        filterObj.isPaid = isPaid;
         if(industry !== "0"){
-            filterObj.industry = industry
-        }
-        if(expLevel !== "0"){
-            filterObj.expLevel = expLevel
+            filterObj.industry = industry;
         }
         if(country !== "0"){
-            filterObj.country = country
+            filterObj.country = country;
         }
         if(sort === "latest"){
-            sortBy = '-createdAt'
+            sortBy = '-createdAt';
         }
         else{
-            sortBy = 'createdAt'
+            sortBy = 'createdAt';
         }
         const postIds = [];
         const internships:any = await this.internshipsDataService.getFilteredInternshipsByObj(filterObj, limit, skip, sortBy);

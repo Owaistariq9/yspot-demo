@@ -74,9 +74,15 @@ export class InternshipsController {
 
     // @MessagePattern("getInternshipsByPage")
     @UseGuards(JwtAuthGuard)
-    @Get("filter/:sort/:industry/:expLevel/:country/:page/:limit")
+    @Get("filter/:sort/:industry/:isPaid/:country/:page/:limit")
     async getFilteredInternshipsByPage(@Request() req:any){
-        return await this.internshipsService.getFilteredInternships(req.params.industry, req.params.expLevel, req.params.country, req.params.sort, req.params.page, req.params.limit, req.user._id);
+        if(req.params.isPaid === "true"){
+            req.params.isPaid = true
+        }
+        else{
+            req.params.isPaid = false
+        }
+        return await this.internshipsService.getFilteredInternships(req.params.industry, req.params.isPaid, req.params.country, req.params.sort, req.params.page, req.params.limit, req.user._id);
         // return {"internships": internships};
     }
 

@@ -1,4 +1,4 @@
-import { IsArray, IsDefined, IsNotEmpty, IsNumber, IsObject, IsString } from "class-validator";
+import { IsArray, IsBoolean, IsDefined, IsNotEmpty, IsNumber, IsObject, IsString } from "class-validator";
 
 export class internshipDTO {
     @IsString()
@@ -33,8 +33,6 @@ export class internshipDTO {
     country:String="";
     @IsString()
     city:String="";
-    @IsString()
-    educationalInstitute:String="";
     @IsNotEmpty()
     @IsDefined()
     @IsNumber()
@@ -45,8 +43,8 @@ export class internshipDTO {
     endSalary:Number= 0; 
     @IsNotEmpty()
     @IsDefined()
-    @IsString()
-    expLevel:String = "";
+    @IsBoolean()
+    isPaid:Boolean = false;
     @IsNumber()
     commentsCount:Number= 0;
     @IsNumber()
@@ -88,14 +86,12 @@ export class updateInternshipDTO {
     country:String="";
     @IsString()
     city:String="";
-    @IsString()
-    educationalInstitute:String="";
     @IsNumber()
     startSalary:Number= 0; 
     @IsNumber()
     endSalary:Number= 0; 
-    @IsString()
-    expLevel:String = "";
+    @IsBoolean()
+    isPaid:Boolean = false;
     @IsNumber()
     commentsCount:Number= 0;
     @IsNumber()

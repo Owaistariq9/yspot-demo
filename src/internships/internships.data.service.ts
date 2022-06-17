@@ -4,12 +4,14 @@ import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
 import { Internships } from "./models/internships.model";
 import { Recommands } from "./models/recommands.model";
+import { UserInternships } from "./models/userInternships.model";
 
 @Injectable()
 export class InternshipsDataService {
     constructor(
         @InjectModel('Internships') private readonly InternshipModel: Model<Internships>,
-        @InjectModel('Recommands') private readonly RecommandModel: Model<Recommands>
+        @InjectModel('Recommands') private readonly RecommandModel: Model<Recommands>,
+        @InjectModel('UserInternships') private readonly UserInternshipsModel: Model<UserInternships>
     ) {}
 
     async insertInternships (obj: any){
@@ -34,6 +36,17 @@ export class InternshipsDataService {
         }
     }
 
+    async insertUserInternship (obj: any){
+        try{
+            const recommands = new this.UserInternshipsModel(obj);
+            await recommands.save();
+            return recommands.toObject();
+        }
+        catch(err){
+            return err
+        }
+    }
+
     async insertManyRecommands (arr: any){
         try{
             const recommands = await this.RecommandModel.insertMany(arr);
@@ -42,6 +55,10 @@ export class InternshipsDataService {
         catch(err){
             return err
         }
+    }
+
+    async getInternshipFeedbackData (internshipId: string, userId: string){
+        return await this.UserInternshipsModel.findOne( { $and: [ { "internshipId": internshipId }, {"userId": userId } ] } ).lean().exec();
     }
 
     async getRecommands (internshipId: string, recommandedBy: string, recommandedTo: string){
@@ -71,6 +88,16 @@ export class InternshipsDataService {
         const internship = await this.InternshipModel.findOneAndUpdate({_id},{$set:internshipObj},{new:true}).lean().exec();
         if(!internship){
             throw (new NotFoundException("There is no internship with this id"));
+        }
+        else{
+            return internship;
+        }
+    }
+
+    async updateUserInternshipFeedback(internshipId: string, userId: string, feedBackObj: any){
+        const internship = await this.UserInternshipsModel.findOneAndUpdate({$and: [{"internshipId": internshipId}, {"userId": userId}]},{$set: {feedback: feedBackObj} },{new:true}).lean().exec();
+        if(!internship){
+            throw (new NotFoundException("This user is not a part of this internship"));
         }
         else{
             return internship;

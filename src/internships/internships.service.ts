@@ -17,6 +17,7 @@ import { PostsService } from "src/posts/posts.service";
 import { SearchService } from "src/search/search.service";
 import { UsersService } from "src/users/user.service";
 import { InternshipsDataService } from "./internships.data.service";
+import { feedbackDto } from "./internships.dto";
 
 @Injectable()
 export class InternshipsService {
@@ -68,13 +69,23 @@ export class InternshipsService {
 
   async insertInternship(obj: any) {
     try {
-      const newInternship = await this.internshipsDataService.insertInternships(
-        obj
-      );
-      const esData = await this.searchService.insertInternshipData(
-        newInternship
-      );
+      const newInternship = await this.internshipsDataService.insertInternships(obj);
+      const esData = await this.searchService.insertInternshipData(newInternship);
       return newInternship;
+    } catch (err) {
+      return err;
+    }
+  }
+
+  async insertUserInternship(internshipId: string, userId: string, businessId: string) {
+    try {
+      const obj = {
+        internshipId,
+        userId,
+        businessId
+      }
+      const userInternship = await this.internshipsDataService.insertUserInternship(obj);
+      return userInternship;
     } catch (err) {
       return err;
     }
@@ -329,5 +340,17 @@ export class InternshipsService {
         internship.applied = false;
       }
       return internship;
+    }
+
+    async updateUserInternshipFeedback(feedBackObj: feedbackDto, userId: string, internshipId: string) {
+      feedBackObj.totalRating = Number(feedBackObj.ability) + Number(feedBackObj.contribution) + Number(feedBackObj.creativity) + Number(feedBackObj.adaptability) + Number(feedBackObj.initiative) + Number(feedBackObj.integrity) + Number(feedBackObj.responsiveness);
+      feedBackObj.avgRating = Number(feedBackObj.totalRating) / 7;
+      const userInternship = await this.internshipsDataService.updateUserInternshipFeedback(internshipId, userId, feedBackObj);
+      const user = await this.userService.updateUserInternshipRating(userId, Number(feedBackObj.totalRating));
+      return userInternship;
+    }
+
+    async getUserInternshipFeedback(userId: string, internshipId: string) {
+      return await this.internshipsDataService.getInternshipFeedbackData(internshipId, userId);
     }
 }

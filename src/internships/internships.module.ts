@@ -10,10 +10,12 @@ import { RecommandsSchema } from './models/recommands.model';
 import { UserModule } from 'src/users/user.module';
 import { FCMProviderModule } from 'src/fcm-provider/fcm.module';
 import { BookmarksModule } from 'src/bookmarks/bookmarks.module';
+import { UserInternshipsSchema } from './models/userInternships.model';
 
 @Module({
   imports: [MongooseModule.forFeature([{name:'Internships', schema:InternshipsSchema, collection:'internships'}]),
   MongooseModule.forFeature([{name:'Recommands', schema:RecommandsSchema, collection:'recommands'}]),
+  MongooseModule.forFeature([{name:'UserInternships', schema:UserInternshipsSchema, collection:'user-internships'}]),
 // PostsModule,
 forwardRef(() => PostsModule),
 // BookmarksModule,

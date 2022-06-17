@@ -338,7 +338,7 @@ export class PostsDataService {
     }
 
     async getInternshipResponses(postId: string, skip:number, limit:number){
-        let postResponses = await this.responseModel.find( { $and: [ {"postId": postId}, { $or: [ {"data.status": "interviewed"}, {"data.status": "hired"} ] } ] } )
+        let postResponses = await this.responseModel.find( { $and: [ {"postId": postId}, { $or: [ {"data.status": "interviewed"}, {"data.status": "hired"}, {"data.status": "completed"} ] } ] } )
         .limit(limit)
         .skip(skip)
         .sort('-createdAt')

@@ -2,7 +2,7 @@ import { BadRequestException, Body, Controller, Delete, Get, Patch, Post, Put, R
 import { MessagePattern, Payload, RpcException } from '@nestjs/microservices';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { Constants } from 'src/core/constants/constants';
-import { internshipDTO, ResponseDTO, updateInternshipDTO } from './internships.dto';
+import { feedbackDto, internshipDTO, ResponseDTO, updateInternshipDTO } from './internships.dto';
 import { InternshipsService } from './internships.service';
 
 @Controller('internships')
@@ -118,10 +118,30 @@ export class InternshipsController {
 
     @UseGuards(JwtAuthGuard)
     @Put(":internshipId/elastic")
-    // @MessagePattern("addRecommand")
     async updateInternshipInElasticSearch(@Request() req:any){
         const internship = await this.internshipsService.updateInternshipInElasticSearch(req.params.internshipId);
         return {"UpdatedInternship": internship};
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Put(":internshipId/feedback/:userId")
+    async updateInternshipFeedback(@Request() req:any,
+    @Body() data: feedbackDto){
+        if(req.user.userClaims.userType !== Constants.business){
+            throw new BadRequestException("Only business account can add feedbacks");
+        }
+        const internship = await this.internshipsService.updateUserInternshipFeedback(data, req.params.userId, req.params.internshipId);
+        return {"UpdatedInternshipFeedback": internship};
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Get(":internshipId/feedback/:userId")
+    async getInternshipFeedback(@Request() req:any){
+        if(req.user.userClaims.userType !== Constants.business){
+            throw new BadRequestException("Only business account can see feedbacks");
+        }
+        const internship = await this.internshipsService.getUserInternshipFeedback(req.params.userId, req.params.internshipId);
+        return {"InternshipFeedback": internship};
     }
 
     // @MessagePattern("submitInternshipResponse")

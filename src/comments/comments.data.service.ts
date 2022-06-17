@@ -24,7 +24,6 @@ export class CommentsDataService {
 
     async getCommentsByPostId(postId:String){
         const comments = await this.commentModel.findOne({ postId: postId }).lean().exec();
-        console.log(comments);
         if(!comments){
             return null
         }

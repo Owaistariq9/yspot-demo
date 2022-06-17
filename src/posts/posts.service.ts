@@ -420,8 +420,10 @@ export class PostsService {
             }
             else{
                 responseData = await this.postDataService.insertResponse(responseObj);
-                let internshipData = await this.internshipService.incResponseCountByPostId(responseObj.postId);
-                let userData = await this.userService.incJobAppliedCount(userId);
+                const internshipData: any = await this.internshipService.incResponseCountByPostId(responseObj.postId);
+                const userData = await this.userService.incJobAppliedCount(userId);
+                const userInternshipData = await this.internshipService.insertUserInternship(responseData.postId, userId, internshipData.userId);
+                console.log(userInternshipData);
                 const notification: any = {
                     Notification:{
                     data:{},

@@ -1,4 +1,5 @@
-import { IsArray, IsBoolean, IsDefined, IsNotEmpty, IsNumber, IsObject, IsString } from "class-validator";
+import { Type } from "class-transformer";
+import { IsArray, IsBoolean, IsDefined, IsNotEmpty, IsNumber, IsObject, IsString, ValidateNested } from "class-validator";
 
 export class internshipDTO {
     @IsString()
@@ -123,4 +124,56 @@ export class ResponseDTO {
     postType: String = "";
     @IsObject()
     data: any
+}
+
+export class feedbackDto {
+    @IsDefined()
+    @IsNotEmpty()
+    @IsNumber()
+    ability: Number;
+    @IsDefined()
+    @IsNotEmpty()
+    @IsNumber()
+    contribution: Number;
+    @IsDefined()
+    @IsNotEmpty()
+    @IsNumber()
+    responsiveness: Number;
+    @IsDefined()
+    @IsNotEmpty()
+    @IsNumber()
+    creativity: Number;
+    @IsDefined()
+    @IsNotEmpty()
+    @IsNumber()
+    adaptability: Number;
+    @IsDefined()
+    @IsNotEmpty()
+    @IsNumber()
+    initiative: Number;
+    @IsDefined()
+    @IsNotEmpty()
+    @IsNumber()
+    integrity: Number;
+    @IsNumber()
+    totalRating: Number;
+    @IsNumber()
+    avgRating: Number;
+}
+export class UserInternshipsDto {
+    @IsDefined()
+    @IsNotEmpty()
+    @IsString()
+    internshipId: String = "";
+    @IsDefined()
+    @IsNotEmpty()
+    @IsString()
+    userId: String = "";
+    @IsDefined()
+    @IsNotEmpty()
+    @IsString()
+    businessId: String = "";
+    @Type(() => feedbackDto)
+    @ValidateNested()
+    feedback: feedbackDto
 }

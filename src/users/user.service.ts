@@ -171,4 +171,12 @@ export class UsersService {
     return userUpdate;
   }
 
+  async updateUserInternshipRating(userId: string, totalRating: number){
+    const user:any = await this.usersDataService.incTotalInternshipsCompletedCount(userId);
+    user.totalInternshipsRating += totalRating;
+    user.avgInternshipRating = user.totalInternshipsRating / user.totalInternshipsCompleted;
+    const updatedUser = await this.usersDataService.updateUserObject(userId, user);
+    return updatedUser;
+  }
+
 }

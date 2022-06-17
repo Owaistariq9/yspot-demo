@@ -27,51 +27,61 @@ export class UsersDataService {
     catch(err){
         return err
     }
-}
+  }
 
-async getUserByEmail(email: string) {
+  async getUserByEmail(email: string) {
+      try{
+        const user = await this.userModel.findOne({ email: email }).lean().exec();
+        return user
+      }
+      catch(err){
+        return err
+      }
+  }
+
+  async getUserPasswordByEmail(email: string) {
     try{
-      const user = await this.userModel.findOne({ email: email }).lean().exec();
+      const user = await this.userModel.findOne({ email: email }).select('+password').lean().exec();
       return user
     }
     catch(err){
       return err
     }
-}
-
-async getUserPasswordByEmail(email: string) {
-  try{
-    const user = await this.userModel.findOne({ email: email }).select('+password').lean().exec();
-    return user
   }
-  catch(err){
-    return err
-  }
-}
 
-async getUserById(id: string) {
-    try{
-      const user = await this.userModel.findById(id).lean().exec();
-      return user
+  async getUserById(id: string) {
+      try{
+        const user = await this.userModel.findById(id).lean().exec();
+        return user
+      }
+      catch(err){
+        return err
+      }
+  }
+  async getForgetPasswordToken(token:string){
+      let user = await this.userModel.findOne({forgetPasswordToken:token}).lean().exec();
+      if(!user){
+        throw (new NotFoundException("Invalid Token"));
+      }
+      return user;
     }
-    catch(err){
-      return err
-    }
-}
-async getForgetPasswordToken(token:string){
-    let user = await this.userModel.findOne({forgetPasswordToken:token}).lean().exec();
+
+  async updateUserObject(_id:string,userObj:any){
+      let user = await this.userModel.findOneAndUpdate({_id},{$set:userObj},{new:true}).lean().exec();
+      if(!user){
+        throw (new NotFoundException("Invalid Token"));
+      }
+      return user;
+  }
+
+  async incTotalInternshipsCompletedCount(userId:String){
+    const user = await this.userModel.findOneAndUpdate({"_id":userId},{$inc :{'totalInternshipsCompleted':1}},{new:true}).lean().exec();
     if(!user){
-      throw (new NotFoundException("Invalid Token"));
+        throw (new NotFoundException("There is no user with this Id"));
     }
-    return user;
-  }
-
-async updateUserObject(_id:string,userObj:any){
-    let user = await this.userModel.findOneAndUpdate({_id},{$set:userObj},{new:true}).lean().exec();
-    if(!user){
-      throw (new NotFoundException("Invalid Token"));
+    else{
+        return user;
     }
-    return user;
   }
 
   async incJobAppliedCount(userId:String){

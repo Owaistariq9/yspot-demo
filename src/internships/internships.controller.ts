@@ -120,7 +120,7 @@ export class InternshipsController {
     @Put(":internshipId/elastic")
     async updateInternshipInElasticSearch(@Request() req:any){
         const internship = await this.internshipsService.updateInternshipInElasticSearch(req.params.internshipId);
-        return {"UpdatedInternship": internship};
+        return {"updatedInternship": internship};
     }
 
     @UseGuards(JwtAuthGuard)
@@ -131,7 +131,7 @@ export class InternshipsController {
             throw new BadRequestException("Only business account can add feedbacks");
         }
         const internship = await this.internshipsService.updateUserInternshipFeedback(data, req.params.userId, req.params.internshipId);
-        return {"UpdatedInternshipFeedback": internship};
+        return {"updatedInternshipFeedback": internship};
     }
 
     @UseGuards(JwtAuthGuard)
@@ -141,7 +141,7 @@ export class InternshipsController {
             throw new BadRequestException("Only business account can see feedbacks");
         }
         const internship = await this.internshipsService.getUserInternshipFeedback(req.params.userId, req.params.internshipId);
-        return {"InternshipFeedback": internship};
+        return {"internshipFeedback": internship};
     }
 
     // @MessagePattern("submitInternshipResponse")

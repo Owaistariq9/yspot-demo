@@ -21,7 +21,7 @@ forwardRef(() => PostsModule),
 // BookmarksModule,
 forwardRef(() => BookmarksModule),
 UserModule,
-SearchModule,
+// SearchModule,
 FCMProviderModule
 ],
   controllers: [InternshipsController],

@@ -25,7 +25,7 @@ export class InternshipsService {
   constructor(
     private readonly internshipsDataService: InternshipsDataService,
     private readonly fcmService: FCMService,
-    private readonly searchService: SearchService,
+    // private readonly searchService: SearchService,
     private readonly userService: UsersService,
     @Inject(forwardRef(() => PostsService))
     private readonly postService: PostsService,
@@ -70,7 +70,7 @@ export class InternshipsService {
   async insertInternship(obj: any) {
     try {
       const newInternship = await this.internshipsDataService.insertInternships(obj);
-      const esData = await this.searchService.insertInternshipData(newInternship);
+      // const esData = await this.searchService.insertInternshipData(newInternship);
       return newInternship;
     } catch (err) {
       return err;
@@ -142,10 +142,10 @@ export class InternshipsService {
       _id,
       internshipObj
     );
-    const esData = await this.searchService.updateInternshipData(
-      _id,
-      internshipObj
-    );
+    // const esData = await this.searchService.updateInternshipData(
+    //   _id,
+    //   internshipObj
+    // );
     if (!internship) {
       throw new NotFoundException("There is no internship with this id");
     } else {
@@ -157,7 +157,7 @@ export class InternshipsService {
     const internship = await this.internshipsDataService.deleteInternship(
       internshipId
     );
-    const esData = await this.searchService.deleteInternshipData(internshipId);
+    // const esData = await this.searchService.deleteInternshipData(internshipId);
     if (!internship) {
       throw new NotFoundException("There is no internship with this id");
     } else {
@@ -167,10 +167,10 @@ export class InternshipsService {
 
   async incCommentCountByPostId(postId: String) {
     const post = await this.internshipsDataService.incCommentCountByInternshipId(postId);
-    const espost = await this.searchService.updateInternshipData(
-      post._id,
-      post
-    );
+    // const espost = await this.searchService.updateInternshipData(
+    //   post._id,
+    //   post
+    // );
     if (!post) {
       throw new NotFoundException("There is no internship with this Id");
     } else {
@@ -181,10 +181,10 @@ export class InternshipsService {
   async decCommentCountByPostId(postId: String) {
     const internship =
       await this.internshipsDataService.decCommentCountByInternshipId(postId);
-    const espost = await this.searchService.updateInternshipData(
-      internship._id,
-      internship
-    );
+    // const espost = await this.searchService.updateInternshipData(
+    //   internship._id,
+    //   internship
+    // );
     if (!internship) {
       throw new NotFoundException("There is no internship with this Id");
     } else {
@@ -253,10 +253,10 @@ export class InternshipsService {
       await this.internshipsDataService.incResponseCountByInternshipId(
         internshipId
       );
-    const esinternship = await this.searchService.updateInternshipData(
-      internship._id,
-      internship
-    );
+    // const esinternship = await this.searchService.updateInternshipData(
+    //   internship._id,
+    //   internship
+    // );
     // const esinternship = await this.searchService.getInternshipData(internship._id);
     // console.log(esinternship);
     // console.log(esinternship.body.hits.hits);
@@ -322,7 +322,7 @@ export class InternshipsService {
 
     async updateInternshipInElasticSearch(internshipId:string){
         const internship = await this.internshipsDataService.getInternshipById(internshipId);
-        const esData = await this.searchService.updateInternshipData(internshipId, internship);
+        // const esData = await this.searchService.updateInternshipData(internshipId, internship);
         if(!internship){
             throw (new NotFoundException("There is no internship with this id"));
         }

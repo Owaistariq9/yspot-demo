@@ -6,7 +6,7 @@ import { PostsSchema } from './models/posts.model';
 import { PostsService } from './posts.service';
 import { ResponseSchema } from './models/post.response.model';
 import { UserResponseSchema } from './models/post.userResponse.model';
-import { SearchModule } from 'src/search/search.module';
+// import { SearchModule } from 'src/search/search.module';
 import { UserModule } from 'src/users/user.module';
 import { FollowersModule } from 'src/followers/followers.module';
 import { InternshipsModule } from 'src/internships/internships.module';
@@ -15,7 +15,7 @@ import { FCMProviderModule } from 'src/fcm-provider/fcm.module';
 @Module({
   imports: [
     FCMProviderModule,
-    SearchModule,
+    // SearchModule,
     UserModule,
     FollowersModule,
     forwardRef(() => InternshipsModule),

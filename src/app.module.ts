@@ -5,7 +5,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { PostsModule } from './posts/posts.module';
 import { CommentsModule } from './comments/comments.module';
 import { LikesModule } from './likes/likes.module';
-import { SearchModule } from './search/search.module';
+// import { SearchModule } from './search/search.module';
 import { InternshipsModule } from './internships/internships.module';
 import * as dotenv from 'dotenv';
 import { BookmarksModule } from './bookmarks/bookmarks.module';
@@ -33,7 +33,7 @@ import { FCMProviderModule } from './fcm-provider/fcm.module';
     BookmarksModule,
     CommentsModule,
     LikesModule,
-    SearchModule,
+    // SearchModule,
     UsersApprovalRequestModule
   ],
   controllers: [AppController],

@@ -37,6 +37,7 @@ export const UserSchema = new Schema(
         shortlisted: {type:Number , default: 0},
         recommanded: {type:Number , default: 0},
         interviewed: {type:Number , default: 0},
+        completed: {type:Number , default: 0},
     },
     socialLogin:[{
         profileId: String,
@@ -45,37 +46,53 @@ export const UserSchema = new Schema(
         accessToken: String,
         socialLoginType: String,
         data: Object
-    }]   
+    }]
 },{ timestamps: true }
 )
 
 export interface User extends mongoose.Document {
-    _id: String
-    createdOnDate:Number
-    fullName:String
-    email:String
-    password:String
-    age:Number
-    gender: String
-    phone:String
-    profilePicture:String
-    country:String
-    city:String
-    state:String
-    zipCode:String
-    address:String
-    status:String
-    notificationSettings:Boolean
-    IsSocialLogin:Boolean
-    data:Object
-    forgetPasswordTime:Number
-    forgetPasswordToken:String
+    fullName: String,
+    email:String,
+    password: String,
+    age: Number,
+    gender: String,
+    phone: String,
+    profilePicture: String,
+    zipCode: String,
+    country: String,
+    city: String,
+    state: String,
+    address: String,
+    bio: String,
+    qualification: String,
+    institute: String,
+    startYear: String,
+    endYear: String,
+    status: String,
+    notificationSettings: Boolean,
+    IsSocialLogin: Boolean,
+    userType: String,
+    followerCount: number,
+    followingCount: number,
+    avgInternshipRating: number,
+    totalInternshipsRating: number,
+    totalInternshipsCompleted: number,
+    data: Object,
+    forgetPasswordTime: number,
+    forgetPasswordToken: String,
+    jobStats:{
+        applied: number,
+        shortlisted: number,
+        recommanded: number,
+        interviewed: number,
+        completed: number,
+    },
     socialLogin:[{
         profileId: String,
         userName: String,
         url: String,
         accessToken: String,
-        type: String,
+        socialLoginType: String,
         data: Object
-    }]   
+    }]
 }

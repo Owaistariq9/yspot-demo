@@ -17,6 +17,6 @@ export const FCM_Message ={
     APPLYING_INTERNSHIP:()=>{return {title:"Intership Applicant",body:"Someone has applied for an Internship"}},
     UPDATE_HIRED_INTERNSHIP_STATUS:()=>{return {title:`Intership Update`,body:`You have been hired`}},
     UPDATE_INTERVIEW_INTERNSHIP_STATUS:()=>{return {title:`Intership Update`,body:`You have been selected for an interview`}},
+    COMPLETED:()=>{return {title:`Congratulations`,body:`You have completed an Internship`}},
     RECOMMANDED:()=>{return {title:`Recommended Internship`,body:`You have been recommended for an Internship`}},
-    
 }

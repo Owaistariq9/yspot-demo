@@ -154,6 +154,12 @@ export class UsersService {
     return userUpdate;
   }
 
+  async incJobCompletedCount(userId: string){
+    let userUpdate = await this.usersDataService.incJobCompletedCount(userId);
+    userUpdate.password = "";
+    return userUpdate;
+  }
+
   async incManyJobRecommandCount(userId: any){
     let userUpdate = await this.usersDataService.incManyJobRecommandCount(userId);
     return userUpdate;

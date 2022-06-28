@@ -104,6 +104,16 @@ export class UsersDataService {
     }
   }
 
+  async incJobCompletedCount(userId:String){
+    const user = await this.userModel.findOneAndUpdate({"_id":userId},{$inc :{'jobStats.completed':1}},{new:true}).lean().exec();
+    if(!user){
+        throw (new NotFoundException("There is no user with this Id"));
+    }
+    else{
+        return user;
+    }
+  }
+
   async incJobRecommandCount(userId:String){
     const user = await this.userModel.findOneAndUpdate({"_id":userId},{$inc :{'jobStats.recommanded':1}},{new:true}).lean().exec();
     if(!user){

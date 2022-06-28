@@ -516,7 +516,7 @@ export class PostsService {
                 UserId: userId,
               };
         }
-        if(status === "hired"){
+        else if(status === "hired"){
             let userData = await this.userService.incJobShortlistCount(userId);
             notification = {
                 Notification:{
@@ -524,6 +524,18 @@ export class PostsService {
                 notification: {
                   title: FCM_Message.UPDATE_HIRED_INTERNSHIP_STATUS().title,
                   body: FCM_Message.UPDATE_HIRED_INTERNSHIP_STATUS().body,
+                }},
+                UserId: userId,
+              };
+        }
+        else if(status === "completed"){
+            let userData = await this.userService.incJobCompletedCount(userId);
+            notification = {
+                Notification:{
+                data:{},
+                notification: {
+                  title: FCM_Message.COMPLETED().title,
+                  body: FCM_Message.COMPLETED().body,
                 }},
                 UserId: userId,
               };

@@ -47,7 +47,7 @@ export interface Internships extends mongoose.Document {
     media: [{
         contentType:String,
         url:String,
-        type: MediaType
+        mediaType: MediaType
     }],
     data: {},
     startTime:String,

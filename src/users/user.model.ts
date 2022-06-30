@@ -1,4 +1,5 @@
 import * as mongoose from "mongoose";
+import { MediaType } from "src/posts/postsTypes.enum";
 const Schema = mongoose.Schema;
 
 export const UserSchema = new Schema(
@@ -46,7 +47,13 @@ export const UserSchema = new Schema(
         accessToken: String,
         socialLoginType: String,
         data: Object
-    }]
+    }],
+    media: [{
+        name: String,
+        contentType: String,
+        url: String,
+        mediaType: String
+    }],
 },{ timestamps: true }
 )
 
@@ -94,5 +101,11 @@ export interface User extends mongoose.Document {
         accessToken: String,
         socialLoginType: String,
         data: Object
-    }]
+    }],
+    media: [{
+        name: String,
+        contentType:String,
+        url:String,
+        mediaType: MediaType
+    }],
 }

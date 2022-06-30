@@ -1,6 +1,17 @@
 
-import { IsArray, IsBoolean, IsEmail, IsNumber, IsObject, IsString } from "class-validator";
+import { Type } from "class-transformer";
+import { IsArray, IsBoolean, IsEmail, IsNumber, IsObject, IsString, ValidateNested } from "class-validator";
 
+export class MediaDto {
+    @IsString()
+    name: String;
+    @IsString()
+    contentType: String;
+    @IsString()
+    url: String;
+    @IsString()
+    mediaType: String;
+}
 export class UpdateUserDto {
     @IsString()
     fullName:string;
@@ -40,6 +51,9 @@ export class UpdateUserDto {
     IsSocialLogin:Boolean;
     @IsObject()
     data:Object;
+    @Type(() => MediaDto)
+    @ValidateNested()
+    media: MediaDto[]
     @IsArray()
     socialLogin:Array<Object>;
 }

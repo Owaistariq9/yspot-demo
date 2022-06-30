@@ -33,7 +33,7 @@ export class NotificationsService {
   async getUserNotificationByPage(userId: string, page:number, limit:number) {
     const skip = (page - 1) * limit;
     const newNotification = await this.notificationsDataService.getUserNotificationByPage(userId, skip, limit);
-    return newNotification;
+    return {"notifications": newNotification};
   }
 
   async encryptPassword(password: string) {

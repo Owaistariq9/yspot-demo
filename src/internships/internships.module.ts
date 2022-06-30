@@ -11,6 +11,7 @@ import { UserModule } from 'src/users/user.module';
 import { FCMProviderModule } from 'src/fcm-provider/fcm.module';
 import { BookmarksModule } from 'src/bookmarks/bookmarks.module';
 import { UserInternshipsSchema } from './models/userInternships.model';
+import { NotificationModule } from 'src/notifications/notification.module';
 
 @Module({
   imports: [MongooseModule.forFeature([{name:'Internships', schema:InternshipsSchema, collection:'internships'}]),
@@ -22,7 +23,8 @@ forwardRef(() => PostsModule),
 forwardRef(() => BookmarksModule),
 UserModule,
 // SearchModule,
-FCMProviderModule
+FCMProviderModule,
+NotificationModule
 ],
   controllers: [InternshipsController],
   providers: [InternshipsService,InternshipsDataService],

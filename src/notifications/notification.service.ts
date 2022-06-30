@@ -6,18 +6,34 @@ import { NotificationsDataService } from './notification.data.service';
 @Injectable()
 export class NotificationsService {
   constructor(
-    private readonly usersDataService: NotificationsDataService
+    private readonly notificationsDataService: NotificationsDataService
   ) {}
 
   async create(obj) {
       try{
     
-        const newNotification = await this.usersDataService.create(obj)
+        const newNotification = await this.notificationsDataService.create(obj)
           return newNotification;
       }
       catch(err){
           return err
       }
+  }
+
+  async insertManyUserNotifications (arr: any){
+    const newNotification = await this.notificationsDataService.insertManyUserNotifications(arr);
+    return newNotification;
+}
+
+  async addUserNotification(obj: any) {
+    const newNotification = await this.notificationsDataService.addUserNotification(obj);
+    return newNotification;
+  }
+
+  async getUserNotificationByPage(userId: string, page:number, limit:number) {
+    const skip = (page - 1) * limit;
+    const newNotification = await this.notificationsDataService.getUserNotificationByPage(userId, skip, limit);
+    return newNotification;
   }
 
   async encryptPassword(password: string) {
@@ -33,7 +49,7 @@ export class NotificationsService {
   }
 
   async getNotificationByEmail(email: string) {
-      const user = await this.usersDataService.getNotificationByEmail(email);
+      const user = await this.notificationsDataService.getNotificationByEmail(email);
       if(!user){
         return null
       }
@@ -42,7 +58,7 @@ export class NotificationsService {
 
   async getNotificationById(id: string) {
     try{
-      const user = await this.usersDataService.getNotificationById(id);
+      const user = await this.notificationsDataService.getNotificationById(id);
       return user
     }
     catch(err){
@@ -52,7 +68,7 @@ export class NotificationsService {
 
   async getUsersTokens(userId: string[]) :Promise<string[]>{
     try{
-      const user = await this.usersDataService.getUsersTokens(userId);
+      const user = await this.notificationsDataService.getUsersTokens(userId);
       return [...new Set(user)] as string[]
     }
     catch(err){
@@ -62,12 +78,12 @@ export class NotificationsService {
 
 
   async pushNotificationTokens(userId:string, notificationTokens:{deviceId: string,device: string,}):Promise<boolean>{
-    let userUpdate = await this.usersDataService.pushNotificationTokens(userId, notificationTokens);
+    let userUpdate = await this.notificationsDataService.pushNotificationTokens(userId, notificationTokens);
     return userUpdate;
   }
   
   async updateNotificationProfile(userId: string, userUpdated: UpdateNotificationDto){
-    let userUpdate = await this.usersDataService.updateNotificationObject(userId, userUpdated);
+    let userUpdate = await this.notificationsDataService.updateNotificationObject(userId, userUpdated);
     return userUpdate;
   }
 

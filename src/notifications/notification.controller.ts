@@ -15,7 +15,7 @@ import { NotificationsService } from "./notification.service";
 export class NotificationsController {
   constructor(
     private readonly fcmService: FCMService,
-    private readonly usersService: NotificationsService) {}
+    private readonly notificationService: NotificationsService) {}
 
   
   @Get("/test")
@@ -40,18 +40,21 @@ export class NotificationsController {
   }
 
   @UseGuards(JwtAuthGuard)
+  @Get("user/:page/:limit")
+  async getUserNotificationsByPage(@Request() req: any) {
+    return await this.notificationService.getUserNotificationByPage(req.user._id, req.params.page, req.params.limit);
+  }
+
+  @UseGuards(JwtAuthGuard)
   @Post("/token")
-  async addNotificationToken(
-    @Param("token") token: string,
-    @Request() req: any
-  ) {
+  async addNotificationToken(@Request() req: any) {
     try {
-      const getNotification = await this.usersService.getNotificationById(
+      const getNotification = await this.notificationService.getNotificationById(
         req.user._id
       );
       let updateNotification;
       if (getNotification) {
-        updateNotification = await this.usersService.pushNotificationTokens(
+        updateNotification = await this.notificationService.pushNotificationTokens(
           req.user._id,
           {
             deviceId: req.body.deviceId,
@@ -65,7 +68,7 @@ export class NotificationsController {
             { deviceId: req.body.deviceId, type: req.body.type },
           ],
         };
-        updateNotification = await this.usersService.create(obj);
+        updateNotification = await this.notificationService.create(obj);
       }
       if (updateNotification) {
         return {message:"Successfull Token Added"};

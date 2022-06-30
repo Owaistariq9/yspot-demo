@@ -13,6 +13,7 @@ import {
 import { BookmarksService } from "src/bookmarks/bookmarks.service";
 import { FCM_Message } from "src/core/constants/constants";
 import { FCMService } from "src/fcm-provider/fcm.service";
+import { NotificationsService } from "src/notifications/notification.service";
 import { PostsService } from "src/posts/posts.service";
 import { SearchService } from "src/search/search.service";
 import { UsersService } from "src/users/user.service";
@@ -25,6 +26,7 @@ export class InternshipsService {
   constructor(
     private readonly internshipsDataService: InternshipsDataService,
     private readonly fcmService: FCMService,
+    private readonly notificationService: NotificationsService,
     // private readonly searchService: SearchService,
     private readonly userService: UsersService,
     @Inject(forwardRef(() => PostsService))
@@ -204,6 +206,7 @@ export class InternshipsService {
       );
 
     let recommondListObj = [];
+    let userNotificationListObj = [];
     recommandDataList.forEach(async (x) => {
       // recommondListObj.includes(x.recommandedTo)
       let index = recommandList.indexOf(x.recommandedTo);
@@ -223,12 +226,19 @@ export class InternshipsService {
       //     internship = await this.internshipsDataService.incRecommandCountByInternshipId(internshipId);
       //     const espost = await this.searchService.updateInternshipData(internship._id, internship);
       // }
-      let obj = {
+      const obj = {
         internshipId: internshipId,
         recommandedBy: userId,
         recommandedTo: x,
       };
       recommondListObj.push(obj);
+
+      const userNotification = {
+        userId: x,
+        title: FCM_Message.RECOMMANDED().title,
+        message: FCM_Message.RECOMMANDED().body
+      }
+      userNotificationListObj.push(userNotification);
     });
 
     const users = await this.userService.incManyJobRecommandCount(
@@ -242,10 +252,8 @@ export class InternshipsService {
     };
 
     await this.fcmService.pushMessageBulk(recommandList, notification);
-
-    return await this.internshipsDataService.insertManyRecommands(
-      recommondListObj
-    );
+    await this.notificationService.insertManyUserNotifications(userNotificationListObj);
+    return await this.internshipsDataService.insertManyRecommands(recommondListObj);
   }
 
   async incResponseCountByPostId(internshipId: String) {

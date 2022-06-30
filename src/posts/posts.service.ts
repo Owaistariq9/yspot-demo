@@ -503,9 +503,11 @@ export class PostsService {
     }
 
     async updateInternshipResponseStatus(_id: string, status: string, userId: string){
-        let notification: any = {}
+        let notification: any = {};
+        let userNotification: any = {}
+        userNotification.userId = userId;
         if(status === "interviewed"){
-            let userData = await this.userService.incJobInterviewCount(userId);
+            const userData = await this.userService.incJobInterviewCount(userId);
             notification = {
                 Notification:{
                 data:{},
@@ -514,10 +516,12 @@ export class PostsService {
                   body: FCM_Message.UPDATE_INTERVIEW_INTERNSHIP_STATUS().body,
                 }},
                 UserId: userId,
-              };
+            };            
+            userNotification.title = FCM_Message.UPDATE_INTERVIEW_INTERNSHIP_STATUS().title;
+            userNotification.message = FCM_Message.UPDATE_INTERVIEW_INTERNSHIP_STATUS().body;
         }
         else if(status === "hired"){
-            let userData = await this.userService.incJobShortlistCount(userId);
+            const userData = await this.userService.incJobShortlistCount(userId);
             notification = {
                 Notification:{
                 data:{},
@@ -526,10 +530,12 @@ export class PostsService {
                   body: FCM_Message.UPDATE_HIRED_INTERNSHIP_STATUS().body,
                 }},
                 UserId: userId,
-              };
+            };
+            userNotification.title = FCM_Message.UPDATE_HIRED_INTERNSHIP_STATUS().title;
+            userNotification.message = FCM_Message.UPDATE_HIRED_INTERNSHIP_STATUS().body;
         }
         else if(status === "completed"){
-            let userData = await this.userService.incJobCompletedCount(userId);
+            const userData = await this.userService.incJobCompletedCount(userId);
             notification = {
                 Notification:{
                 data:{},
@@ -538,7 +544,9 @@ export class PostsService {
                   body: FCM_Message.COMPLETED().body,
                 }},
                 UserId: userId,
-              };
+            };
+            userNotification.title = FCM_Message.COMPLETED().title;
+            userNotification.message = FCM_Message.COMPLETED().body;
         }
       
         await this.fcmService.sendNotification(notification)

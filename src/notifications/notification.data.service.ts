@@ -3,12 +3,14 @@ import { RpcException } from '@nestjs/microservices';
 import { InjectModel } from '@nestjs/mongoose';
 import { ObjectId } from 'mongodb';
 import { Model, Types } from 'mongoose';
-import { Notification } from './notification.model';
+import { Notification } from './models/notification.model';
+import { UserNotification } from './models/userNotifications.model';
 
 @Injectable()
 export class NotificationsDataService {
   constructor(
-    @InjectModel('Notification') private readonly notificationModel: Model<Notification>
+    @InjectModel('Notification') private readonly notificationModel: Model<Notification>,
+    @InjectModel('UserNotification') private readonly userNotificationModel: Model<UserNotification>
   ) {}
 
   async getUsersTokens(userIds:string[]){
@@ -42,63 +44,92 @@ export class NotificationsDataService {
       return []
   }
 
-
-
-
-async create(obj) {
-  try{
-    const newNotification = new this.notificationModel(obj);
-      const result = await newNotification.save();
-      return result;
-  }
-  catch(err){
-      return err
-  }
-}
-
-async getNotificationByEmail(email: string) {
+  async addUserNotification(obj: any) {
     try{
-      const user = await this.notificationModel.findOne({ email: email }).lean().exec();
-      return user
+      const newNotification = new this.userNotificationModel(obj);
+        const result = await newNotification.save();
+        return result;
     }
     catch(err){
-      return err
+        return err
     }
-}
+  }
 
-async pushNotificationTokens(userId:String, notificationTokens:any):Promise<boolean>{
-  const result = await this.notificationModel.findOneAndUpdate({userId:userId},{$push:{notificationTokens:notificationTokens}},{new:true}).lean().exec();
-  if(!result){
-    return false
-  }
-  else{
-      return true
-  }
-}
-async getNotificationById(id: string) {
+  async insertManyUserNotifications (arr: any){
     try{
-      let userId:any = new Types.ObjectId(id)
-      const user = await this.notificationModel.findOne({userId:userId }).lean().exec();
-      return user
+        const newNotification = await this.userNotificationModel.insertMany(arr);
+        return newNotification;
     }
     catch(err){
-      return err
+        return err
     }
-}
-async getForgetPasswordToken(token:string){
-    let user = await this.notificationModel.findOne({forgetPasswordToken:token}).lean().exec();
-    if(!user){
-      throw (new NotFoundException("Invalid Token"));
-    }
-    return user;
   }
 
-async updateNotificationObject(_id:string,userObj:any){
-    let user = await this.notificationModel.findOneAndUpdate({_id},{$set:userObj},{new:true}).lean().exec();
-    if(!user){
-      throw (new NotFoundException("Invalid Token"));
+
+  async create(obj) {
+    try{
+      const newNotification = new this.notificationModel(obj);
+        const result = await newNotification.save();
+        return result;
     }
-    return user;
+    catch(err){
+        return err
+    }
   }
+
+  async getUserNotificationByPage(userId: string, skip:number, limit:number){
+    const userNotifications = await this.userNotificationModel.find({userId: userId})
+    .limit(limit)
+    .skip(skip)
+    .sort('-createdAt')
+    .lean()
+    .exec();
+  return userNotifications
+  }
+
+  async getNotificationByEmail(email: string) {
+      try{
+        const user = await this.notificationModel.findOne({ email: email }).lean().exec();
+        return user
+      }
+      catch(err){
+        return err
+      }
+  }
+
+  async pushNotificationTokens(userId:String, notificationTokens:any):Promise<boolean>{
+    const result = await this.notificationModel.findOneAndUpdate({userId:userId},{$push:{notificationTokens:notificationTokens}},{new:true}).lean().exec();
+    if(!result){
+      return false
+    }
+    else{
+        return true
+    }
+  }
+  async getNotificationById(id: string) {
+      try{
+        let userId:any = new Types.ObjectId(id)
+        const user = await this.notificationModel.findOne({userId:userId }).lean().exec();
+        return user
+      }
+      catch(err){
+        return err
+      }
+  }
+  async getForgetPasswordToken(token:string){
+      let user = await this.notificationModel.findOne({forgetPasswordToken:token}).lean().exec();
+      if(!user){
+        throw (new NotFoundException("Invalid Token"));
+      }
+      return user;
+    }
+
+  async updateNotificationObject(_id:string,userObj:any){
+      let user = await this.notificationModel.findOneAndUpdate({_id},{$set:userObj},{new:true}).lean().exec();
+      if(!user){
+        throw (new NotFoundException("Invalid Token"));
+      }
+      return user;
+    }
 
 }

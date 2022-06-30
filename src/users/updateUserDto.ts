@@ -39,7 +39,7 @@ export class UpdateUserDto {
     @IsBoolean()
     IsSocialLogin:Boolean;
     @IsObject()
-    data:Object = {};
+    data:Object;
     @IsArray()
-    socialLogin:Array<Object> = [];
+    socialLogin:Array<Object>;
 }

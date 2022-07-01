@@ -84,6 +84,16 @@ export class UsersDataService {
     }
   }
 
+  async incInternshipCreatedCount(userId:String){
+    const user = await this.userModel.findOneAndUpdate({"_id":userId},{$inc :{'jobStats.internshipsCreated':1}},{new:true}).lean().exec();
+    if(!user){
+        throw (new NotFoundException("There is no user with this Id"));
+    }
+    else{
+        return user;
+    }
+  }
+
   async incJobAppliedCount(userId:String){
     const user = await this.userModel.findOneAndUpdate({"_id":userId},{$inc :{'jobStats.applied':1}},{new:true}).lean().exec();
     if(!user){

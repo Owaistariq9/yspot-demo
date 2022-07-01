@@ -73,6 +73,7 @@ export class InternshipsService {
     try {
       const newInternship = await this.internshipsDataService.insertInternships(obj);
       // const esData = await this.searchService.insertInternshipData(newInternship);
+      await this.userService.incInternshipsCreatedCount(obj.userId)
       return newInternship;
     } catch (err) {
       return err;

@@ -502,12 +502,13 @@ export class PostsService {
         return await this.postDataService.getResponseByUserIdAndPostId(userId, postId)
     }
 
-    async updateInternshipResponseStatus(_id: string, status: string, userId: string){
+    async updateInternshipResponseStatus(_id: string, status: string, userId: string, currentUserId: string){
         let notification: any = {};
         let userNotification: any = {}
         userNotification.userId = userId;
         if(status === "interviewed"){
             const userData = await this.userService.incJobInterviewCount(userId);
+            await this.userService.incJobInterviewCount(currentUserId);
             notification = {
                 Notification:{
                 data:{},
@@ -522,6 +523,7 @@ export class PostsService {
         }
         else if(status === "hired"){
             const userData = await this.userService.incJobShortlistCount(userId);
+            await this.userService.incJobShortlistCount(currentUserId);
             notification = {
                 Notification:{
                 data:{},
@@ -536,6 +538,7 @@ export class PostsService {
         }
         else if(status === "completed"){
             const userData = await this.userService.incJobCompletedCount(userId);
+            await this.userService.incJobCompletedCount(currentUserId);
             notification = {
                 Notification:{
                 data:{},

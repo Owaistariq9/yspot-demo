@@ -18,7 +18,7 @@ export class InternshipsController {
             throw new BadRequestException("Only business account can add internships");
         }
         data.userId = req.user._id
-        let posts = await this.internshipsService.insertInternship(data);
+        const posts = await this.internshipsService.insertInternship(data);
         return posts;
     }
 

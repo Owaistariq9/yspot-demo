@@ -142,6 +142,12 @@ export class UsersService {
     };
   }
 
+  async incInternshipsCreatedCount(userId: string){
+    let userUpdate = await this.usersDataService.incInternshipCreatedCount(userId);
+    userUpdate.password = "";
+    return userUpdate;
+  }
+
   async incJobAppliedCount(userId: string){
     let userUpdate = await this.usersDataService.incJobAppliedCount(userId);
     userUpdate.password = "";

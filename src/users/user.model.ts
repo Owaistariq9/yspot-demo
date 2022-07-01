@@ -38,6 +38,7 @@ export const UserSchema = new Schema(
         shortlisted: {type:Number , default: 0},
         recommanded: {type:Number , default: 0},
         interviewed: {type:Number , default: 0},
+        internshipsCreated: {type:Number , default: 0},
         completed: {type:Number , default: 0},
     },
     socialLogin:[{

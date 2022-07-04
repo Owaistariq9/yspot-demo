@@ -74,6 +74,7 @@ export class InternshipsService {
       const newInternship = await this.internshipsDataService.insertInternships(obj);
       // const esData = await this.searchService.insertInternshipData(newInternship);
       await this.userService.incInternshipsCreatedCount(obj.userId)
+      await this.insertDemographics(newInternship._id);
       return newInternship;
     } catch (err) {
       return err;
@@ -361,5 +362,36 @@ export class InternshipsService {
 
     async getUserInternshipFeedback(userId: string, internshipId: string) {
       return await this.internshipsDataService.getInternshipFeedbackData(internshipId, userId);
+    }
+
+    async insertDemographics(internshipId: string) {
+      const obj = {
+        internshipId: internshipId
+      }
+      return await this.internshipsDataService.insertDemographics(obj);
+    }
+
+    async updateDemographicsByAgeAndGender(internshipId: String, age: Number, gender: String) {
+      if(age < 21){
+        await this.internshipsDataService.incAge16To20CountByInternshipId(internshipId);
+      }
+      else{
+        await this.internshipsDataService.incAge21To25CountByInternshipId(internshipId);
+      }
+      if(gender == 'male'){
+        await this.internshipsDataService.incMaleCountByInternshipId(internshipId);
+      }
+      else{
+        await this.internshipsDataService.incFemaleCountByInternshipId(internshipId);
+      }
+      return "Demographics updated";
+    }
+
+    async getInternshipDemographics(internshipId: string) {
+      const demographics: any = await this.internshipsDataService.getDemographicsDataByInternshipId(internshipId);
+      const total = demographics.age16To20Count + demographics.age21To25Count;
+      demographics.age16To20Percentage = (demographics.age16To20Count/total) * 100;
+      demographics.age21To25Percentage = (demographics.age21To25Count/total) * 100;
+      return demographics;
     }
 }

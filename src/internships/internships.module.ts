@@ -12,11 +12,13 @@ import { FCMProviderModule } from 'src/fcm-provider/fcm.module';
 import { BookmarksModule } from 'src/bookmarks/bookmarks.module';
 import { UserInternshipsSchema } from './models/userInternships.model';
 import { NotificationModule } from 'src/notifications/notification.module';
+import { DemographicsSchema } from './models/demographics.model';
 
 @Module({
   imports: [MongooseModule.forFeature([{name:'Internships', schema:InternshipsSchema, collection:'internships'}]),
   MongooseModule.forFeature([{name:'Recommands', schema:RecommandsSchema, collection:'recommands'}]),
   MongooseModule.forFeature([{name:'UserInternships', schema:UserInternshipsSchema, collection:'user-internships'}]),
+  MongooseModule.forFeature([{name:'Demographics', schema:DemographicsSchema, collection:'demographics'}]),
 // PostsModule,
 forwardRef(() => PostsModule),
 // BookmarksModule,

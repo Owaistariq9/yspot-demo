@@ -2,6 +2,7 @@ import { Injectable, NotFoundException } from "@nestjs/common";
 import { RpcException } from "@nestjs/microservices";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
+import { Demographics } from "./models/demographics.model";
 import { Internships } from "./models/internships.model";
 import { Recommands } from "./models/recommands.model";
 import { UserInternships } from "./models/userInternships.model";
@@ -11,7 +12,8 @@ export class InternshipsDataService {
     constructor(
         @InjectModel('Internships') private readonly InternshipModel: Model<Internships>,
         @InjectModel('Recommands') private readonly RecommandModel: Model<Recommands>,
-        @InjectModel('UserInternships') private readonly UserInternshipsModel: Model<UserInternships>
+        @InjectModel('UserInternships') private readonly UserInternshipsModel: Model<UserInternships>,
+        @InjectModel('Demographics') private readonly DemographicsModel: Model<Demographics>
     ) {}
 
     async insertInternships (obj: any){
@@ -38,9 +40,20 @@ export class InternshipsDataService {
 
     async insertUserInternship (obj: any){
         try{
-            const recommands = new this.UserInternshipsModel(obj);
-            await recommands.save();
-            return recommands.toObject();
+            const userInternships = new this.UserInternshipsModel(obj);
+            await userInternships.save();
+            return userInternships.toObject();
+        }
+        catch(err){
+            return err
+        }
+    }
+
+    async insertDemographics (obj: any){
+        try{
+            const demographics = new this.DemographicsModel(obj);
+            await demographics.save();
+            return demographics.toObject();
         }
         catch(err){
             return err
@@ -281,6 +294,56 @@ export class InternshipsDataService {
                 "expLevel": expLevel
             }
         ]}).limit(limit).skip(skip).sort(sort).lean().exec();
+    }
+
+    async incAge16To20CountByInternshipId(internshipId:String){
+        const post = await this.DemographicsModel.findOneAndUpdate({"_id": internshipId}, {$inc :{'age16To20Count':1}},{new:true}).lean().exec();
+        if(!post){
+            throw (new NotFoundException("There is no demographics with this internshipId"));
+        }
+        else{
+            return post;
+        }
+    }
+
+    async incAge21To25CountByInternshipId(internshipId:String){
+        const post = await this.DemographicsModel.findOneAndUpdate({"_id": internshipId}, {$inc :{'age21To25Count':1}},{new:true}).lean().exec();
+        if(!post){
+            throw (new NotFoundException("There is no demographics with this internshipId"));
+        }
+        else{
+            return post;
+        }
+    }
+
+    async incMaleCountByInternshipId(internshipId:String){
+        const post = await this.DemographicsModel.findOneAndUpdate({"_id": internshipId}, {$inc :{'maleCount':1}},{new:true}).lean().exec();
+        if(!post){
+            throw (new NotFoundException("There is no demographics with this internshipId"));
+        }
+        else{
+            return post;
+        }
+    }
+
+    async incFemaleCountByInternshipId(internshipId:String){
+        const post = await this.DemographicsModel.findOneAndUpdate({"_id": internshipId}, {$inc :{'femaleCount':1}},{new:true}).lean().exec();
+        if(!post){
+            throw (new NotFoundException("There is no demographics with this internshipId"));
+        }
+        else{
+            return post;
+        }
+    }
+
+    async getDemographicsDataByInternshipId (internshipId: String){
+        const demographics = await this.DemographicsModel.findOne({internshipId: internshipId}).lean().exec();
+        if(!demographics){
+            throw (new NotFoundException("There is no demographics with this internshipId"));
+        }
+        else{
+            return demographics;
+        }
     }
     
 }

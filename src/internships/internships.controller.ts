@@ -144,6 +144,16 @@ export class InternshipsController {
         return {"internshipFeedback": internship};
     }
 
+    @UseGuards(JwtAuthGuard)
+    @Get(":internshipId/demographics")
+    async getDemographics(@Request() req:any){
+        if(req.user.userClaims.userType !== Constants.business){
+            throw new BadRequestException("Only business account can see demographics");
+        }
+        const demographics = await this.internshipsService.getInternshipDemographics(req.params.internshipId);
+        return {"demographics": demographics};
+    }
+
     // @MessagePattern("submitInternshipResponse")
     // async submitInternshipResponse(@Payload() data:any){
     //     let recommands = await this.internshipsService.addResponse(data.responseObj,data.userId);

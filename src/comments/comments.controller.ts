@@ -2,7 +2,7 @@ import { Controller, Post, Get, Request, UseGuards, Param, NotFoundException, Ba
 import { MessagePattern, Payload, RpcException } from '@nestjs/microservices';
 import { Constants } from 'src/core/constants/constants';
 import { InternshipsService } from 'src/internships/internships.service';
-// import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { PostsService } from 'src/posts/posts.service';
 import { commentsDTO } from './comments.dto';
 import { CommentsService } from './comments.service';
@@ -13,7 +13,7 @@ export class CommentsController {
         private readonly postsService:PostsService,
         private readonly internshipsService: InternshipsService){}
 
-    // @UseGuards(JwtAuthGuard)
+    @UseGuards(JwtAuthGuard)
     // @MessagePattern("comment")
     @Post('posts/:postId/:postType/comments')
     async comment(@Request() req:any){
@@ -38,7 +38,7 @@ export class CommentsController {
         }
     }
 
-    // @UseGuards(JwtAuthGuard)
+    @UseGuards(JwtAuthGuard)
     // @MessagePattern("getComment")
     @Get('posts/:postId/comments')
     async getComment(@Param('postId') postId:String){
@@ -49,7 +49,7 @@ export class CommentsController {
         return { "comments": comments};
     }
 
-    // @UseGuards(JwtAuthGuard)
+    @UseGuards(JwtAuthGuard)
     // @MessagePattern("getCommentByIndex")
     @Get('posts/:postId/comments/:startIndex/:endIndex')
     async getCommentsByIndex(@Request() req:any){
@@ -60,7 +60,7 @@ export class CommentsController {
         return { "comments": comments};
     }
 
-    // @UseGuards(JwtAuthGuard)
+    @UseGuards(JwtAuthGuard)
     // @MessagePattern("updateUserComment")
     @Put('posts/:postId/updateComment')
     async updateUserComment(@Request() req:any){
@@ -74,9 +74,9 @@ export class CommentsController {
         return { "comments": comments};
     }
 
-    // @UseGuards(JwtAuthGuard)
+    @UseGuards(JwtAuthGuard)
     // @MessagePattern("deleteOwnComment")
-    @Put('posts/:postId/deleteOwnComment/:commentId')
+    @Put(':postType/:postId/deleteOwnComment/:commentId')
     async deleteOwnComment(@Request() req:any){
         if(req.user._id !== req.body.userId){
             throw (new BadRequestException("Unable to delete other's comments"));
@@ -97,9 +97,9 @@ export class CommentsController {
         return { "data": comments};
     }
 
-    // @UseGuards(JwtAuthGuard)
     // @MessagePattern("deleteComments")
-    @Put('posts/:postId/deleteComments')
+    @UseGuards(JwtAuthGuard)
+    @Put(':postType/:postId/deleteComments')
     async deleteComments(@Request() req:any){
         let post:any;
         if(!req.body.commentId){

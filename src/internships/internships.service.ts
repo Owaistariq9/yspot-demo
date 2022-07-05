@@ -390,8 +390,14 @@ export class InternshipsService {
     async getInternshipDemographics(internshipId: string) {
       const demographics: any = await this.internshipsDataService.getDemographicsDataByInternshipId(internshipId);
       const total = demographics.age16To20Count + demographics.age21To25Count;
-      demographics.age16To20Percentage = (demographics.age16To20Count/total) * 100;
-      demographics.age21To25Percentage = (demographics.age21To25Count/total) * 100;
+      if(total == 0){
+        demographics.age16To20Percentage = 0;
+        demographics.age21To25Percentage = 0;
+      }
+      else{
+        demographics.age16To20Percentage = (demographics.age16To20Count/total) * 100;
+        demographics.age21To25Percentage = (demographics.age21To25Count/total) * 100;
+      }
       return demographics;
     }
 }

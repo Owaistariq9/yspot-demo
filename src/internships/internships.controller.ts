@@ -55,13 +55,22 @@ export class InternshipsController {
         let updatedPost = await this.internshipsService.updateInternship(req.params.internshipId, obj);
         return updatedPost;
     }
-
     
     @UseGuards(JwtAuthGuard)
     @Get(":internshipId")
     async getInternshipById(@Request() req:any){
         const internship = await this.internshipsService.getInternshipDataById(req.params.internshipId, req.user._id);
         return {"Internship": internship};
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Get(":internshipId/demographics")
+    async getDemographics(@Request() req:any){
+        if(req.user.userClaims.userType !== Constants.business){
+            throw new BadRequestException("Only business account can see demographics");
+        }
+        const demographics = await this.internshipsService.getInternshipDemographics(req.params.internshipId);
+        return {"demographics": demographics};
     }
 
     @UseGuards(JwtAuthGuard)
@@ -144,15 +153,15 @@ export class InternshipsController {
         return {"internshipFeedback": internship};
     }
 
-    @UseGuards(JwtAuthGuard)
-    @Get(":internshipId/demographics")
-    async getDemographics(@Request() req:any){
-        if(req.user.userClaims.userType !== Constants.business){
-            throw new BadRequestException("Only business account can see demographics");
-        }
-        const demographics = await this.internshipsService.getInternshipDemographics(req.params.internshipId);
-        return {"demographics": demographics};
-    }
+    // @UseGuards(JwtAuthGuard)
+    // @Get(":internshipId/demographics")
+    // async getDemographics(@Request() req:any){
+    //     if(req.user.userClaims.userType !== Constants.business){
+    //         throw new BadRequestException("Only business account can see demographics");
+    //     }
+    //     const demographics = await this.internshipsService.getInternshipDemographics(req.params.internshipId);
+    //     return {"demographics": demographics};
+    // }
 
     // @MessagePattern("submitInternshipResponse")
     // async submitInternshipResponse(@Payload() data:any){

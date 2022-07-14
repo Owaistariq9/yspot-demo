@@ -378,7 +378,7 @@ export class InternshipsService {
       else{
         await this.internshipsDataService.incAge21To25CountByInternshipId(internshipId);
       }
-      if(gender == 'male'){
+      if(gender.toLowerCase() == 'male'){
         await this.internshipsDataService.incMaleCountByInternshipId(internshipId);
       }
       else{

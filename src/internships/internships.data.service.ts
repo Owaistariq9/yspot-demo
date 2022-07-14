@@ -297,7 +297,7 @@ export class InternshipsDataService {
     }
 
     async incAge16To20CountByInternshipId(internshipId:String){
-        const post = await this.DemographicsModel.findOneAndUpdate({"_id": internshipId}, {$inc :{'age16To20Count':1}},{new:true}).lean().exec();
+        const post = await this.DemographicsModel.findOneAndUpdate({"internshipId": internshipId}, {$inc :{'age16To20Count':1}},{new:true}).lean().exec();
         if(!post){
             throw (new NotFoundException("There is no demographics with this internshipId"));
         }
@@ -307,7 +307,7 @@ export class InternshipsDataService {
     }
 
     async incAge21To25CountByInternshipId(internshipId:String){
-        const post = await this.DemographicsModel.findOneAndUpdate({"_id": internshipId}, {$inc :{'age21To25Count':1}},{new:true}).lean().exec();
+        const post = await this.DemographicsModel.findOneAndUpdate({"internshipId": internshipId}, {$inc :{'age21To25Count':1}},{new:true}).lean().exec();
         if(!post){
             throw (new NotFoundException("There is no demographics with this internshipId"));
         }
@@ -317,7 +317,7 @@ export class InternshipsDataService {
     }
 
     async incMaleCountByInternshipId(internshipId:String){
-        const post = await this.DemographicsModel.findOneAndUpdate({"_id": internshipId}, {$inc :{'maleCount':1}},{new:true}).lean().exec();
+        const post = await this.DemographicsModel.findOneAndUpdate({"internshipId": internshipId}, {$inc :{'maleCount':1}},{new:true}).lean().exec();
         if(!post){
             throw (new NotFoundException("There is no demographics with this internshipId"));
         }
@@ -327,7 +327,7 @@ export class InternshipsDataService {
     }
 
     async incFemaleCountByInternshipId(internshipId:String){
-        const post = await this.DemographicsModel.findOneAndUpdate({"_id": internshipId}, {$inc :{'femaleCount':1}},{new:true}).lean().exec();
+        const post = await this.DemographicsModel.findOneAndUpdate({"internshipId": internshipId}, {$inc :{'femaleCount':1}},{new:true}).lean().exec();
         if(!post){
             throw (new NotFoundException("There is no demographics with this internshipId"));
         }

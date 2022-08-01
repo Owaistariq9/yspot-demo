@@ -368,7 +368,7 @@ export class PostsService {
         // let followerList = ["618148168fff748826694e73"];
         const posts = await this.searchService.getNewsFeed(skip,limit,data.age,data.country,data.gender, data.userType, userId, followerList)
         // const posts = await this.searchService.test();
-        return {"posts": posts};
+        return {"posts": posts.body?.hits?.hits || []};
     }
 
     async submitResponses(userId: string, responseObj: ResponseDTO){

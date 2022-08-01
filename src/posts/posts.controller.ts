@@ -82,17 +82,6 @@ export class PostsController {
                 return { "postId": post._id} ;
             }
         }
-        // else if(postObj.type == PostsType.CONTEST){
-        //     postObj.data.participantsCount = 0;
-        //     let check = await this.postService.verifyContestData(postObj.data);
-        //     if(check.error){
-        //         throw (new HttpException(check.error,400));
-        //     }
-        //     else{
-        //         let post = await this.postService.insertPost(postObj);
-        //         return { "postId": post._id} ;
-        //     }
-        // }
         else if(postObj.type == PostsType.CAMPAIGN){
             let post = await this.postService.insertPost(postObj);
             return { "postId": post._id} ;

@@ -4,7 +4,7 @@ import * as Joi from 'joi';
 import { isValidObjectId } from 'mongoose';
 import { FollowersService } from 'src/followers/followers.service';
 import { InternshipsService } from 'src/internships/internships.service';
-// import { SearchService } from 'src/search/search.service';
+import { SearchService } from 'src/search/search.service';
 import { UsersService } from 'src/users/user.service';
 import { PostsDataService } from './posts.data.service';
 import { postDTO, ResponseDTO } from './posts.dto';
@@ -21,7 +21,7 @@ export class PostsService {
         private readonly followerService: FollowersService,
         @Inject(forwardRef(() => InternshipsService))
         private readonly internshipService: InternshipsService,
-        // private readonly searchService: SearchService
+        private readonly searchService: SearchService
         ){
         // this.client = ClientProxyFactory.create({
         //     transport: Transport.TCP,
@@ -35,7 +35,7 @@ export class PostsService {
     async insertPost (postObj:postDTO){
         try{
             const newPost = await this.postDataService.insertPost(postObj);
-            // let esData = await this.searchService.insertPostData(newPost);
+            let esData = await this.searchService.insertPostData(newPost);
             // let esDataa = await this.searchService.getAllPostData();
             // let esDataa = await this.searchService.getPostData("sfFIyH0BJ6oVHwyah70d");
             return newPost;
@@ -206,7 +206,7 @@ export class PostsService {
 
     async updatePost(_id:string, postObj: postDTO){
         const post = await this.postDataService.updatePost(_id,postObj);
-        // const espost = await this.searchService.updatePostData(_id, postObj);
+        const espost = await this.searchService.updatePostData(_id, postObj);
         if(!post){
             throw (new NotFoundException("There is no posts with this id"));
         }
@@ -217,7 +217,7 @@ export class PostsService {
 
     async deletePost(postId:string){
         const post = await this.postDataService.deletePost(postId);
-        // const espost = await this.searchService.deletePostData(postId);
+        const espost = await this.searchService.deletePostData(postId);
         if(!post){
             throw (new NotFoundException("There is no posts with this id"));
         }
@@ -248,7 +248,7 @@ export class PostsService {
 
     async incCommentCountByPostId(postId:String){
         const post = await this.postDataService.incCommentCountByPostId(postId);
-        // const espost = await this.searchService.updatePostData(post._id, post);
+        const espost = await this.searchService.updatePostData(post._id, post);
         if(!post){
             throw (new NotFoundException("There is no posts with this Id"));
         }
@@ -259,7 +259,7 @@ export class PostsService {
 
     async decCommentCountByPostId(postId:String){
         const post = await this.postDataService.decCommentCountByPostId(postId);
-        // const espost = await this.searchService.updatePostData(post._id, post);
+        const espost = await this.searchService.updatePostData(post._id, post);
         if(!post){
             throw (new NotFoundException("There is no posts with this Id"));
         }
@@ -270,7 +270,7 @@ export class PostsService {
 
     async incLikeCountByPostId(postId:String){
         const post = await this.postDataService.incLikeCountByPostId(postId);
-        // const espost = await this.searchService.updatePostData(post._id, post);
+        const espost = await this.searchService.updatePostData(post._id, post);
         if(!post){
             throw (new NotFoundException("There is no posts with this Id"));
         }
@@ -281,7 +281,7 @@ export class PostsService {
 
     async decLikeCountByPostId(postId:String){
         const post = await this.postDataService.decLikeCountByPostId(postId);
-        // const espost = await this.searchService.updatePostData(post._id, post);
+        const espost = await this.searchService.updatePostData(post._id, post);
         if(!post){
             throw (new NotFoundException("There is no posts with this Id"));
         }
@@ -298,7 +298,7 @@ export class PostsService {
         else{
             post = await this.postDataService.incPollCountByPostId(postId);
             post = await this.postDataService.incPollOptionCountByPostId(postId,pollOptionsId);
-            // const espost = await this.searchService.updatePostData(post._id, post);
+            const espost = await this.searchService.updatePostData(post._id, post);
             return post;
         }
     }
@@ -310,7 +310,7 @@ export class PostsService {
         }
         else{
             let updatedPost = await this.postDataService.incSurveyCount(postId);
-            // const espost = await this.searchService.updatePostData(post._id, post);
+            const espost = await this.searchService.updatePostData(post._id, post);
             return updatedPost;
         }
     }
@@ -346,7 +346,7 @@ export class PostsService {
         //     city:data.city || ""
         // }
         const posts = await this.postDataService.updateIntrestedForEventByPostId(postId,userObj);
-        // const espost = await this.searchService.updatePostData(posts._id, posts);
+        const espost = await this.searchService.updatePostData(posts._id, posts);
         return {data: `${userObj.fullName} is intrested in ${postId}`};
     }
 
@@ -366,9 +366,9 @@ export class PostsService {
         // })
         // const posts = await this.postDataService.getPostByPage(skip,limit,data.age,data.country,data.gender, data.userRole, userId);
         // let followerList = ["618148168fff748826694e73"];
-        // const posts = await this.searchService.getNewsFeed(skip,limit,data.age,data.country,data.gender, data.userType, userId, followerList)
+        const posts = await this.searchService.getNewsFeed(skip,limit,data.age,data.country,data.gender, data.userType, userId, followerList)
         // const posts = await this.searchService.test();
-        return {"posts": []};
+        return {"posts": posts};
     }
 
     async submitResponses(userId: string, responseObj: ResponseDTO){
@@ -577,7 +577,7 @@ export class PostsService {
             throw (new HttpException(check.error,400));
         }
         const posts = await this.postDataService.updateContestWinner(postId,winnerObj);
-        // const espost = await this.searchService.updatePostData(posts._id, posts);
+        const espost = await this.searchService.updatePostData(posts._id, posts);
         return {data: `${winnerObj.fullName} is winner of ${postId}`};
     }
 }

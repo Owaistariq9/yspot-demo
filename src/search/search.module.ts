@@ -25,12 +25,13 @@ imports: [
             //     username: process.env.ES_USERNAME,
             //     password: process.env.ES_PASSWORD
             // }
-            node: "https://cef00210780d4c389f7670c63e429c99.southeastasia.azure.elastic-cloud.com:9243",
+            // node: "https://cef00210780d4c389f7670c63e429c99.southeastasia.azure.elastic-cloud.com:9243",
+            node: "https://1cf4135099ce4a8a8c0e3b939bc8ec1d.us-central1.gcp.cloud.es.io",
             maxRetries: 5,
             requestTimeout: 60000,
             auth: {
                 username: "elastic",
-                password: "RT7xOiOC5KqPQMdRKksWtslB"
+                password: "AWJTlaq03r1SW91TCDF58j7m"
             }
         })
       })

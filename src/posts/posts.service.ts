@@ -11,6 +11,7 @@ import { postDTO, ResponseDTO } from './posts.dto';
 import { PostsType } from './postsTypes.enum';
 import { FCMService } from "src/fcm-provider/fcm.service";
 import { FCM_Message } from 'src/core/constants/constants';
+import { LikesService } from 'src/likes/likes.service';
 
 @Injectable()
 export class PostsService {
@@ -21,6 +22,8 @@ export class PostsService {
         private readonly followerService: FollowersService,
         @Inject(forwardRef(() => InternshipsService))
         private readonly internshipService: InternshipsService,
+        @Inject(forwardRef(() => LikesService))
+        private readonly likeService: LikesService,
         private readonly searchService: SearchService
         ){
         // this.client = ClientProxyFactory.create({
@@ -367,8 +370,24 @@ export class PostsService {
         // const posts = await this.postDataService.getPostByPage(skip,limit,data.age,data.country,data.gender, data.userRole, userId);
         // let followerList = ["618148168fff748826694e73"];
         const posts = await this.searchService.getNewsFeed(skip,limit,data.age,data.country,data.gender, data.userType, userId, followerList)
+        const allPosts = posts.body?.hits?.hits || [];
+        const postIds = [];
+        allPosts.forEach(x => {
+            postIds.push(x._source.data._id);
+            x._source.data.isLiked = false;
+          });
+        
+        const check = await this.likeService.checkUserLikes(userId, postIds);
+
+        allPosts.forEach(x => {
+            check.forEach(y => {
+              if(y.postId.toString() === x._source.data._id.toString()){
+                x._source.data.isLiked = true;
+              }
+            });
+          });
         // const posts = await this.searchService.test();
-        return {"posts": posts.body?.hits?.hits || []};
+        return {"posts": allPosts};
     }
 
     async submitResponses(userId: string, responseObj: ResponseDTO){

@@ -72,4 +72,8 @@ export class LikesService {
         }
     }
 
+    async checkUserLikes (userId: string, postIds: any){
+        return await this.likesDataService.checkUsersLikes(userId, postIds);
+      }
+
 }

@@ -73,4 +73,13 @@ export class LikesDataService {
         }
     }
 
+    async checkUsersLikes(userId: string, postIds: any) {
+        try {
+          const userLikeExist = await this.likeModel.find({ "like.userId": userId, postId: {$in: postIds}}).lean().exec();
+          return userLikeExist;
+        } catch (err) {
+          return err;
+        }
+      }
+
 }

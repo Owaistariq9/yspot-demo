@@ -11,7 +11,7 @@ export class LikesDataService {
         @InjectModel('Likes') private readonly likeModel: Model<Likes>,
     ) {}
 
-    async insertComment (likeObj:likesDTO){
+    async insertLike (likeObj:likesDTO){
         try{
             const newLike = new this.likeModel(likeObj);
             await newLike.save();

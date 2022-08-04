@@ -12,9 +12,9 @@ export class LikesService {
         private readonly likesDataService: LikesDataService
     ) {}
 
-    async insertComment (likeObj:likesDTO){
+    async insertLike (likeObj:likesDTO){
         try{
-            const newLike = this.likesDataService.insertComment(likeObj);
+            const newLike = this.likesDataService.insertLike(likeObj);
             return newLike;
         }
         catch(err){

@@ -19,10 +19,11 @@ export class LikesController {
             "like": req.body,
             "postId": req.params.postId
         };
-        const post = await this.postsService.incLikeCountByPostId(req.params.postId);
+        // const post = await this.postsService.incLikeCountByPostId(req.params.postId);
         const likes = await this.likeService.getLikesByPostId(likeObj.postId);
         if(!likes){
-            const newLike = await this.likeService.insertComment(likeObj);
+            const newLike = await this.likeService.insertLike(likeObj);
+            await this.postsService.incLikeCountByPostId(req.params.postId);
             return {"likes": newLike} ;
         }
         else{
@@ -30,6 +31,38 @@ export class LikesController {
             if(check){
                 throw (new BadRequestException("User already liked this post"));
             }
+            const newLike = await this.likeService.updateLikeByPostId(likeObj.postId,req.body);
+            await this.postsService.incLikeCountByPostId(req.params.postId);
+            return {"likes": newLike} ;
+        }
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Post('posts/:postId/likes-dislike')
+    // @MessagePattern("like")
+    async likeOrDislike(@Request() req:any){
+        const likeObj:likesDTO = {
+            "like": req.body,
+            "postId": req.params.postId
+        };
+        const likes = await this.likeService.getLikesByPostId(likeObj.postId);
+        if(!likes){
+            await this.postsService.incLikeCountByPostId(req.params.postId);
+            const newLike = await this.likeService.insertLike(likeObj);
+            return {"likes": newLike} ;
+        }
+        else{
+            const check = await this.likeService.getLikeUserId(req.params.postId,req.body.userId);
+            if(check){
+                // throw (new BadRequestException("User already liked this post"));
+                const like = await this.likeService.removeUserLikeFromPost(req.params.postId,req.user._id);
+                if(!like){
+                    throw (new NotFoundException("Cannot find like of user on this post"));
+                }
+                await this.postsService.decLikeCountByPostId(req.params.postId);
+                return {"message": req.params.postId+" disliked by "+req.user._id};
+            }
+            await this.postsService.incLikeCountByPostId(req.params.postId);
             const newLike = await this.likeService.updateLikeByPostId(likeObj.postId,req.body);
             return {"likes": newLike} ;
         }

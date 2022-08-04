@@ -65,10 +65,10 @@ export class LikesService {
     async updateLikeByPostId(postId:String, likeObj:any){
         const likes:any = await this.likesDataService.updateLikeByPostId(postId,likeObj);
         if(!likes){
-            (new NotFoundException("There is no likes for this post"));
+            throw (new NotFoundException("There is no likes for this post"));
         }
         else{
-            return likes.like[likes.like.length - 1];
+            return likes;
         }
     }
 

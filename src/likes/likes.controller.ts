@@ -15,22 +15,22 @@ export class LikesController {
     @Post('posts/:postId/likes')
     // @MessagePattern("like")
     async like(@Request() req:any){
-        let likeObj:likesDTO = {
+        const likeObj:likesDTO = {
             "like": req.body,
             "postId": req.params.postId
         };
-        let post = await this.postsService.incLikeCountByPostId(req.params.postId);
-        let likes = await this.likeService.getLikesByPostId(likeObj.postId);
+        const post = await this.postsService.incLikeCountByPostId(req.params.postId);
+        const likes = await this.likeService.getLikesByPostId(likeObj.postId);
         if(!likes){
-            let newLike = await this.likeService.insertComment(likeObj);
+            const newLike = await this.likeService.insertComment(likeObj);
             return {"likes": newLike} ;
         }
         else{
-            let check = await this.likeService.getLikeUserId(req.params.postId,req.body.userId);
+            const check = await this.likeService.getLikeUserId(req.params.postId,req.body.userId);
             if(check){
-                (new BadRequestException("User already liked this post"));
+                throw (new BadRequestException("User already liked this post"));
             }
-            let newLike = await this.likeService.updateLikeByPostId(likeObj.postId,req.body);
+            const newLike = await this.likeService.updateLikeByPostId(likeObj.postId,req.body);
             return {"likes": newLike} ;
         }
     }
@@ -41,7 +41,7 @@ export class LikesController {
     async dislike(@Request() req:any){
         let like = await this.likeService.removeUserLikeFromPost(req.params.postId,req.user._id);
         if(!like){
-            (new NotFoundException("Cannot find like of user on this post"));
+            throw (new NotFoundException("Cannot find like of user on this post"));
         }
         let post = await this.postsService.decLikeCountByPostId(req.params.postId);
         return {"message": req.params.postId+" disliked by "+req.user._id};
@@ -53,7 +53,7 @@ export class LikesController {
     async getLike(@Request() req:any){
         let likes = await this.likeService.getLikesByPostId(req.params.postId);
         if(!likes){
-            (new NotFoundException("There are no likes on this post"));
+            throw (new NotFoundException("There are no likes on this post"));
         }
         return {"likes": likes};
     }
@@ -64,7 +64,7 @@ export class LikesController {
     async getLikesByIndex(@Request() req: any){
         let likes = await this.likeService.getLikesByPostIdAndPage(req.params.postId, req.params.startIndex, req.params.endIndex);
         if(!likes){
-            (new NotFoundException("There are no likes on this post"));
+            throw (new NotFoundException("There are no likes on this post"));
         }
         return {"likes": likes};
     }

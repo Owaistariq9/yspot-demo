@@ -38,6 +38,9 @@ export class PostsService {
     async insertPost (postObj:postDTO){
         try{
             const newPost = await this.postDataService.insertPost(postObj);
+            const user = await this.userService.getUserById(newPost.userId);
+            newPost.fullName = user.fullName;
+            newPost.profilePicture = user.profilePicture;
             let esData = await this.searchService.insertPostData(newPost);
             // let esDataa = await this.searchService.getAllPostData();
             // let esDataa = await this.searchService.getPostData("sfFIyH0BJ6oVHwyah70d");

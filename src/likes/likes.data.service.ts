@@ -64,7 +64,7 @@ export class LikesDataService {
     }
 
     async updateLikeByPostId(postId:String, likeObj:any){
-        const likes = await this.likeModel.findOneAndUpdate(postId,{$push:{like:likeObj}},{new:true}).lean().exec();
+        const likes = await this.likeModel.findOneAndUpdate({"postId": postId},{$push:{like:likeObj}},{new:true}).lean().exec();
         if(!likes){
             throw new RpcException(new NotFoundException("There is no likes for this post"));
         }

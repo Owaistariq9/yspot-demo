@@ -52,19 +52,33 @@ export class LikesController {
             return {"likes": newLike} ;
         }
         else{
-            const check = await this.likeService.getLikeUserId(req.params.postId,req.body.userId);
-            if(check){
-                // throw (new BadRequestException("User already liked this post"));
-                const like = await this.likeService.removeUserLikeFromPost(req.params.postId,req.user._id);
-                if(!like){
-                    throw (new NotFoundException("Cannot find like of user on this post"));
-                }
+            let likeExist = false;
+            if(likes.like){
+                likes.like.forEach(x => {
+                    if(x.userId === req.body.userId){
+                        likeExist = true;
+                    }
+                })
+            }
+            if(likeExist === false){
+                await this.postsService.incLikeCountByPostId(req.params.postId);
+                const newLike = await this.likeService.updateLikeByPostId(likeObj.postId,req.body);
+                return {"likes": newLike};
+            }
+            else{
+                const like = await this.likeService.removeUserLikeFromPost(req.params.postId,req.body.userId);
                 await this.postsService.decLikeCountByPostId(req.params.postId);
                 return {"message": req.params.postId+" disliked by "+req.user._id};
             }
-            await this.postsService.incLikeCountByPostId(req.params.postId);
-            const newLike = await this.likeService.updateLikeByPostId(likeObj.postId,req.body);
-            return {"likes": newLike} ;
+            // const check = await this.likeService.getLikeUserId(req.params.postId,req.body.userId);
+            // if(check){
+            //     const like = await this.likeService.removeUserLikeFromPost(req.params.postId,req.body.userId);
+            //     await this.postsService.decLikeCountByPostId(req.params.postId);
+            //     return {"message": req.params.postId+" disliked by "+req.user._id};
+            // }
+            // await this.postsService.incLikeCountByPostId(req.params.postId);
+            // const newLike = await this.likeService.updateLikeByPostId(likeObj.postId,req.body);
+            // return {"likes": newLike};
         }
     }
 

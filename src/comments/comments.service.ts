@@ -71,4 +71,34 @@ export class CommentsService {
             return "Comment deleted.";
         }
     }
+
+    async getApprovedComments ( postId:String, startIndex:number, endIndex:number ){
+        const comments = await this.commentsDataService.getApprovedCommentsByPostIdAndPage(postId, startIndex, endIndex);
+        if(!comments){
+            throw (new NotFoundException("There is no comments for this post"));
+        }
+        else{
+            return comments;
+        }
+    }
+
+    async getUnapprovedComments ( postId:String, startIndex:number, endIndex:number ){
+        const comments = await this.commentsDataService.getUnapprovedCommentsByPostIdAndPage(postId, startIndex, endIndex);
+        if(!comments){
+            throw (new NotFoundException("There is no comments for this post"));
+        }
+        else{
+            return comments;
+        }
+    }
+
+    async approveUserComment ( postId:String, commentId: String ){
+        const comments = await this.commentsDataService.approveUserComment(postId, commentId);
+        if(!comments){
+            throw (new NotFoundException("There is no comments for this post"));
+        }
+        else{
+            return {"message": "Comment approved with Id = " + commentId};
+        }
+    }
 }

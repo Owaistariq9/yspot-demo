@@ -1,4 +1,4 @@
-import { Controller, Post, Get, Request, UseGuards, Param, NotFoundException, BadRequestException, Delete, Put } from '@nestjs/common';
+import { Controller, Post, Get, Request, UseGuards, Param, NotFoundException, BadRequestException, Delete, Put, Patch } from '@nestjs/common';
 import { MessagePattern, Payload, RpcException } from '@nestjs/microservices';
 import { Constants } from 'src/core/constants/constants';
 import { InternshipsService } from 'src/internships/internships.service';
@@ -61,6 +61,28 @@ export class CommentsController {
     }
 
     @UseGuards(JwtAuthGuard)
+    // @MessagePattern("getCommentByIndex")
+    @Get('posts/:postId/approve-comments/:startIndex/:endIndex')
+    async getApproveCommentsByIndex(@Request() req:any){
+        let comments = await this.commentService.getApprovedComments(req.params.postId,req.params.startIndex,req.params.endIndex);
+        if(!comments){
+            throw (new NotFoundException("There are no comments on this post"));
+        }
+        return { "comments": comments};
+    }
+
+    @UseGuards(JwtAuthGuard)
+    // @MessagePattern("getCommentByIndex")
+    @Get('posts/:postId/unapprove-comments/:startIndex/:endIndex')
+    async getUnapproveCommentsByIndex(@Request() req:any){
+        let comments = await this.commentService.getUnapprovedComments(req.params.postId,req.params.startIndex,req.params.endIndex);
+        if(!comments){
+            throw (new NotFoundException("There are no comments on this post"));
+        }
+        return { "comments": comments};
+    }
+
+    @UseGuards(JwtAuthGuard)
     // @MessagePattern("updateUserComment")
     @Put('posts/:postId/updateComment')
     async updateUserComment(@Request() req:any){
@@ -68,6 +90,20 @@ export class CommentsController {
             throw (new BadRequestException("Unable to edit other's comments"));
         }
         let comments = await this.commentService.updateUserComment(req.params.postId,req.body);
+        if(!comments){
+            throw (new NotFoundException("There are no comments on this post"));
+        }
+        return { "comments": comments};
+    }
+
+    @UseGuards(JwtAuthGuard)
+    // @MessagePattern("updateUserComment")
+    @Patch('comment/:commentId/posts/:postId/approve')
+    async approveUserComment(@Request() req:any){
+        if(req.user.userClaims.userType !== Constants.business){
+            throw (new BadRequestException("Only business accounts can approve comments"));
+        }
+        let comments = await this.commentService.approveUserComment(req.params.postId,req.params.commentId);
         if(!comments){
             throw (new NotFoundException("There are no comments on this post"));
         }

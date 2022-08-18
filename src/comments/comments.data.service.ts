@@ -68,11 +68,11 @@ export class CommentsDataService {
                  comment:{$slice:["$comment", +startIndex, +endIndex]}
                  }}
             ])
-        if(!comments){
+        if(!comments[0]){
             return null
         }
         else{
-            return comments;
+            return comments[0];
         }
     }
 
@@ -96,11 +96,11 @@ export class CommentsDataService {
                  comment:{$slice:["$comment", +startIndex, +endIndex]}
                  }}
             ])
-        if(!comments){
+        if(!comments[0]){
             return null
         }
         else{
-            return comments;
+            return comments[0];
         }
     }
 

@@ -45,7 +45,7 @@ export class CommentsService {
     async updateCommentByPostId(postId:String, commentObj:any){
         const comments:any = await this.commentsDataService.updateCommentByPostId(postId,commentObj);
         if(!comments){
-            throw new RpcException(new NotFoundException("There is no comments for this post"));
+            throw (new NotFoundException("There is no comments for this post"));
         }
         else{
             return comments.comment[comments.comment.length - 1];
@@ -55,7 +55,7 @@ export class CommentsService {
     async updateUserComment(postId:String, commentObj:any){
         const comments:any = await this.commentsDataService.updateUserComment(postId,commentObj);
         if(!comments){
-            throw new RpcException(new NotFoundException("There is no comments for this post"));
+            throw (new NotFoundException("There is no comments for this post"));
         }
         else{
             return comments.comment[comments.comment.length - 1];
@@ -65,10 +65,40 @@ export class CommentsService {
     async deleteComment(postId:String, commentId:String){
         const comments = await this.commentsDataService.deleteComment(postId,commentId);
         if(!comments){
-            throw new RpcException(new NotFoundException("There is no comments for this post"));
+            throw (new NotFoundException("There is no comments for this post"));
         }
         else{
             return "Comment deleted.";
+        }
+    }
+
+    async getApprovedComments ( postId:String, startIndex:number, endIndex:number ){
+        const comments = await this.commentsDataService.getApprovedCommentsByPostIdAndPage(postId, startIndex, endIndex);
+        if(!comments){
+            throw (new NotFoundException("There is no comments for this post"));
+        }
+        else{
+            return comments;
+        }
+    }
+
+    async getUnapprovedComments ( postId:String, startIndex:number, endIndex:number ){
+        const comments = await this.commentsDataService.getUnapprovedCommentsByPostIdAndPage(postId, startIndex, endIndex);
+        if(!comments){
+            throw (new NotFoundException("There is no comments for this post"));
+        }
+        else{
+            return comments;
+        }
+    }
+
+    async approveUserComment ( postId:String, commentId: String ){
+        const comments = await this.commentsDataService.approveUserComment(postId, commentId);
+        if(!comments){
+            throw (new NotFoundException("There is no comments for this post"));
+        }
+        else{
+            return {"message": "Comment approved with Id = " + commentId};
         }
     }
 }

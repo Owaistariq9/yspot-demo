@@ -82,17 +82,6 @@ export class PostsController {
                 return { "postId": post._id} ;
             }
         }
-        // else if(postObj.type == PostsType.CONTEST){
-        //     postObj.data.participantsCount = 0;
-        //     let check = await this.postService.verifyContestData(postObj.data);
-        //     if(check.error){
-        //         throw (new HttpException(check.error,400));
-        //     }
-        //     else{
-        //         let post = await this.postService.insertPost(postObj);
-        //         return { "postId": post._id} ;
-        //     }
-        // }
         else if(postObj.type == PostsType.CAMPAIGN){
             let post = await this.postService.insertPost(postObj);
             return { "postId": post._id} ;
@@ -219,10 +208,13 @@ export class PostsController {
     @Patch('/response/:id/:status')
     // @MessagePattern("getPostResponses")
     async updateInternshipResponseStatus(@Request() req:any){
+        if(!req.body.userId){
+            return (new BadRequestException("userId Required!"));
+        }
         if(req.user.userClaims.userType === Constants.user){
             return (new UnauthorizedException("Youth not allowed to see responses"));
         }else{
-            return this.postService.updateInternshipResponseStatus(req.params.id,req.params.status, req.user._id);
+            return this.postService.updateInternshipResponseStatus(req.params.id, req.params.status, req.body.userId, req.user._id);
         }
     }
     

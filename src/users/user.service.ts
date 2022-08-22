@@ -12,7 +12,7 @@ export class UsersService {
     private readonly usersDataService: UsersDataService
   ) {}
 
-  async singup(profilePicture: string, fullName: string, email: string, password: string, phone: string, userType:string) {
+  async singup(profilePicture: string, fullName: string, email: string, password: string, phone: string, gender: string, userType:string) {
       try{
         if(!userType){
           userType = "youth";
@@ -22,6 +22,7 @@ export class UsersService {
           email,
           password,
           phone,
+          gender,
           userType)
           return newUser;
       }
@@ -49,6 +50,14 @@ export class UsersService {
       }
       return user
   }
+
+  async getUserPasswordByEmail(email: string) {
+    const user = await this.usersDataService.getUserPasswordByEmail(email);
+    if(!user){
+      return null
+    }
+    return user
+}
 
   async getUserById(id: string) {
     try{
@@ -133,6 +142,12 @@ export class UsersService {
     };
   }
 
+  async incInternshipsCreatedCount(userId: string){
+    let userUpdate = await this.usersDataService.incInternshipCreatedCount(userId);
+    userUpdate.password = "";
+    return userUpdate;
+  }
+
   async incJobAppliedCount(userId: string){
     let userUpdate = await this.usersDataService.incJobAppliedCount(userId);
     userUpdate.password = "";
@@ -141,6 +156,12 @@ export class UsersService {
 
   async incJobShortlistCount(userId: string){
     let userUpdate = await this.usersDataService.incJobShortlistCount(userId);
+    userUpdate.password = "";
+    return userUpdate;
+  }
+
+  async incJobCompletedCount(userId: string){
+    let userUpdate = await this.usersDataService.incJobCompletedCount(userId);
     userUpdate.password = "";
     return userUpdate;
   }
@@ -160,6 +181,14 @@ export class UsersService {
     let userUpdate = await this.usersDataService.incJobInterviewCount(userId);
     userUpdate.password = "";
     return userUpdate;
+  }
+
+  async updateUserInternshipRating(userId: string, totalRating: number){
+    const user:any = await this.usersDataService.incTotalInternshipsCompletedCount(userId);
+    user.totalInternshipsRating += totalRating;
+    user.avgInternshipRating = user.totalInternshipsRating / user.totalInternshipsCompleted;
+    const updatedUser = await this.usersDataService.updateUserObject(userId, user);
+    return updatedUser;
   }
 
 }

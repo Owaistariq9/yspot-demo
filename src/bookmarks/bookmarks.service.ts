@@ -1,22 +1,35 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { forwardRef, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { lastValueFrom } from 'rxjs';
 import { PostsService } from '../posts/posts.service';
 import { RpcException } from '@nestjs/microservices';
 import { BookmarksDataService } from './bookmarks.data.service';
+import { InternshipsService } from 'src/internships/internships.service';
+import { Constants } from 'src/core/constants/constants';
 
 @Injectable()
 export class BookmarksService {
   constructor(
-    private readonly postsService: PostsService,
     private readonly bookmarkDataService: BookmarksDataService,
+    // private readonly postsService: PostsService,
+    @Inject(forwardRef(() => PostsService))
+    private readonly postsService: PostsService,
+    // private readonly internshipsService: InternshipsService,
+    @Inject(forwardRef(() => InternshipsService))
+    private readonly internshipsService: InternshipsService,
   ) {}
 
-  async toggleBookmark(userId, postId) {
+  async toggleBookmark(userId:string, postId:string, postType:string) {
     try {
-      const post = await this.postsService.getPostById(postId);
+      let post;
+      if(postType === Constants.internship){
+        post = await this.internshipsService.getInternshipById(postId);
+      }
+      else{
+        post = await this.postsService.getPostById(postId);
+      }
 
       if (!post) {
-        throw new RpcException(new NotFoundException('Invalid PostId'));
+        throw (new NotFoundException('Invalid PostId'));
       }
 
       const userBookmark = await this.bookmarkDataService.isUserBookmarkExist(
@@ -27,11 +40,12 @@ export class BookmarksService {
       if (userBookmark) {
         await this.bookmarkDataService.deleteBookMark(userId, postId);
 
-        return 'bookmark deleted ';
+        return { message: 'bookmark removed' };
       } else {
         const bookmark = await this.bookmarkDataService.createBookMark(
           userId,
           postId,
+          postType
         );
 
         return { bookmark, message: 'bookmark added' };
@@ -43,11 +57,11 @@ export class BookmarksService {
 
   async getAllUserBookmarksWithPagination(
     userId: string,
-    skip: number,
+    page: number,
     limit: number,
   ) {
     try {
-
+      let skip = (page - 1) * limit;
       const userBookmarksWithPagination =
         await this.bookmarkDataService.getAllUserBookmarksWithPagination(
           userId,
@@ -60,5 +74,9 @@ export class BookmarksService {
     } catch (err) {
       return err;
     }
+  }
+
+  async checkUserBookmark (userId: string, postIds: any){
+    return await this.bookmarkDataService.checkUsersBookmarks(userId, postIds);
   }
 }

@@ -2,14 +2,18 @@ import { Injectable, NotFoundException } from "@nestjs/common";
 import { RpcException } from "@nestjs/microservices";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
+import { Demographics } from "./models/demographics.model";
 import { Internships } from "./models/internships.model";
 import { Recommands } from "./models/recommands.model";
+import { UserInternships } from "./models/userInternships.model";
 
 @Injectable()
 export class InternshipsDataService {
     constructor(
         @InjectModel('Internships') private readonly InternshipModel: Model<Internships>,
-        @InjectModel('Recommands') private readonly RecommandModel: Model<Recommands>
+        @InjectModel('Recommands') private readonly RecommandModel: Model<Recommands>,
+        @InjectModel('UserInternships') private readonly UserInternshipsModel: Model<UserInternships>,
+        @InjectModel('Demographics') private readonly DemographicsModel: Model<Demographics>
     ) {}
 
     async insertInternships (obj: any){
@@ -34,6 +38,28 @@ export class InternshipsDataService {
         }
     }
 
+    async insertUserInternship (obj: any){
+        try{
+            const userInternships = new this.UserInternshipsModel(obj);
+            await userInternships.save();
+            return userInternships.toObject();
+        }
+        catch(err){
+            return err
+        }
+    }
+
+    async insertDemographics (obj: any){
+        try{
+            const demographics = new this.DemographicsModel(obj);
+            await demographics.save();
+            return demographics.toObject();
+        }
+        catch(err){
+            return err
+        }
+    }
+
     async insertManyRecommands (arr: any){
         try{
             const recommands = await this.RecommandModel.insertMany(arr);
@@ -42,6 +68,10 @@ export class InternshipsDataService {
         catch(err){
             return err
         }
+    }
+
+    async getInternshipFeedbackData (internshipId: string, userId: string){
+        return await this.UserInternshipsModel.findOne( { $and: [ { "internshipId": internshipId }, {"userId": userId } ] } ).lean().exec();
     }
 
     async getRecommands (internshipId: string, recommandedBy: string, recommandedTo: string){
@@ -77,6 +107,16 @@ export class InternshipsDataService {
         }
     }
 
+    async updateUserInternshipFeedback(internshipId: string, userId: string, feedBackObj: any){
+        const internship = await this.UserInternshipsModel.findOneAndUpdate({$and: [{"internshipId": internshipId}, {"userId": userId}]},{$set: {feedback: feedBackObj} },{new:true}).lean().exec();
+        if(!internship){
+            throw (new NotFoundException("This user is not a part of this internship"));
+        }
+        else{
+            return internship;
+        }
+    }
+
     async deleteInternship(id:string){
         const internship = await this.InternshipModel.findByIdAndDelete({"_id":id}).lean().exec();
         if(!internship){
@@ -100,6 +140,16 @@ export class InternshipsDataService {
 
     async getInternshipById(_id:String){
         const internship = await this.InternshipModel.findById(_id).lean().exec();
+        if(!internship){
+            throw (new NotFoundException("Invalid internshipId"));
+        }
+        else{
+            return internship;
+        }
+    }
+
+    async getInternshipDataById(_id:String){
+        const internship = await this.InternshipModel.findById(_id).populate({path: 'userId', model: 'User'}).lean().exec();
         if(!internship){
             throw (new NotFoundException("Invalid internshipId"));
         }
@@ -176,6 +226,123 @@ export class InternshipsDataService {
         }
         else{
             return post;
+        }
+    }
+
+    async getAllInternships (){
+        return await this.InternshipModel.find().lean().exec();
+    }
+
+    async getFilteredInternshipsByObj (filterObj:any, limit: number, skip: number, sort: string){
+        return await this.InternshipModel.find(filterObj).limit(limit).skip(skip).sort(sort).populate({path: 'userId', model: 'User'}).lean().exec();
+    }
+
+    async getFilteredInternships (industry: string, expLevel: string, country: string, limit: number, skip: number, sort: string){
+        return await this.InternshipModel.find({ $and: [
+            {
+                "industry": industry
+            },
+            {
+                "country": country
+            },
+            {
+                "expLevel": expLevel
+            }
+        ]}).limit(limit).skip(skip).sort(sort).lean().exec();
+    }
+
+    async getFilteredInternshipsByIndustry (industry: string, limit: number, skip: number, sort: string){
+        return await this.InternshipModel.find({ "industry": industry }).limit(limit).skip(skip).sort(sort).lean().exec();
+    }
+
+    async getFilteredInternshipsByCountry (country: string, limit: number, skip: number, sort: string){
+        return await this.InternshipModel.find({ "country": country }).limit(limit).skip(skip).sort(sort).lean().exec();
+    }
+
+    async getFilteredInternshipsByExperience (expLevel: string, limit: number, skip: number, sort: string){
+        return await this.InternshipModel.find({ "expLevel": expLevel }).limit(limit).skip(skip).sort(sort).lean().exec();
+    }
+
+    async getFilteredInternshipsByIndustryAndCountry (industry: string, country: string, limit: number, skip: number, sort: string){
+        return await this.InternshipModel.find({ $and: [
+            {
+                "industry": industry
+            },
+            {
+                "country": country
+            }
+        ]}).limit(limit).skip(skip).sort(sort).lean().exec();
+    }
+
+    async getFilteredInternshipsByIndustryAndExperience (industry: string, expLevel: string, limit: number, skip: number, sort: string){
+        return await this.InternshipModel.find({ $and: [
+            {
+                "industry": industry
+            },
+            {
+                "expLevel": expLevel
+            }
+        ]}).limit(limit).skip(skip).sort(sort).lean().exec();
+    }
+
+    async getFilteredInternshipsByCountryAndExperience (expLevel: string, country: string, limit: number, skip: number, sort: string){
+        return await this.InternshipModel.find({ $and: [
+            {
+                "country": country
+            },
+            {
+                "expLevel": expLevel
+            }
+        ]}).limit(limit).skip(skip).sort(sort).lean().exec();
+    }
+
+    async incAge16To20CountByInternshipId(internshipId:String){
+        const post = await this.DemographicsModel.findOneAndUpdate({"internshipId": internshipId}, {$inc :{'age16To20Count':1}},{new:true}).lean().exec();
+        if(!post){
+            throw (new NotFoundException("There is no demographics with this internshipId"));
+        }
+        else{
+            return post;
+        }
+    }
+
+    async incAge21To25CountByInternshipId(internshipId:String){
+        const post = await this.DemographicsModel.findOneAndUpdate({"internshipId": internshipId}, {$inc :{'age21To25Count':1}},{new:true}).lean().exec();
+        if(!post){
+            throw (new NotFoundException("There is no demographics with this internshipId"));
+        }
+        else{
+            return post;
+        }
+    }
+
+    async incMaleCountByInternshipId(internshipId:String){
+        const post = await this.DemographicsModel.findOneAndUpdate({"internshipId": internshipId}, {$inc :{'maleCount':1}},{new:true}).lean().exec();
+        if(!post){
+            throw (new NotFoundException("There is no demographics with this internshipId"));
+        }
+        else{
+            return post;
+        }
+    }
+
+    async incFemaleCountByInternshipId(internshipId:String){
+        const post = await this.DemographicsModel.findOneAndUpdate({"internshipId": internshipId}, {$inc :{'femaleCount':1}},{new:true}).lean().exec();
+        if(!post){
+            throw (new NotFoundException("There is no demographics with this internshipId"));
+        }
+        else{
+            return post;
+        }
+    }
+
+    async getDemographicsDataByInternshipId (internshipId: String){
+        const demographics = await this.DemographicsModel.findOne({internshipId: internshipId}).lean().exec();
+        if(!demographics){
+            throw (new NotFoundException("There is no demographics with this internshipId"));
+        }
+        else{
+            return demographics;
         }
     }
     

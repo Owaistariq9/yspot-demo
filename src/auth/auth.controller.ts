@@ -22,7 +22,6 @@ export class AuthController {
              throw new UnauthorizedException("User credentials invalid");
          }
          let authList = header.authorization.split(" ");
-        // console.log("here");
         // throw {
         //     error: "error",
         //     status:"400"
@@ -65,6 +64,7 @@ export class AuthController {
              user.email,
              encryptedPassword,
              user.phone,
+             user.gender,
              user.userType
            );
            let reqObj = {

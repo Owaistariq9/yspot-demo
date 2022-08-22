@@ -4,7 +4,6 @@ import { Model } from 'mongoose';
 import { Post } from './models/posts.model';
 import { Response } from './models/post.response.model';
 import { UserResponse } from './models/post.userResponse.model';
-import { RpcException } from '@nestjs/microservices';
 
 @Injectable()
 export class PostsDataService {
@@ -66,7 +65,7 @@ export class PostsDataService {
     }
 
     async incCommentCountByPostId(postId:String){
-        const post = await this.postModel.findOneAndUpdate(postId,{$inc :{'commentsCount':1}},{new:true}).lean().exec();
+        const post = await this.postModel.findOneAndUpdate({"_id":postId},{$inc :{'commentsCount':1}},{new:true}).lean().exec();
         if(!post){
             throw (new NotFoundException("There is no posts with this Id"));
         }
@@ -76,7 +75,7 @@ export class PostsDataService {
     }
 
     async decCommentCountByPostId(postId:String){
-        const post = await this.postModel.findOneAndUpdate(postId,{$inc :{'commentsCount': -1}},{new:true}).lean().exec();
+        const post = await this.postModel.findOneAndUpdate({"_id":postId},{$inc :{'commentsCount': -1}},{new:true}).lean().exec();
         if(!post){
             throw (new NotFoundException("There is no posts with this Id"));
         }
@@ -86,7 +85,7 @@ export class PostsDataService {
     }
 
     async incLikeCountByPostId(postId:String){
-        const post = await this.postModel.findOneAndUpdate(postId,{$inc :{'likesCount':1}},{new:true}).lean().exec();
+        const post = await this.postModel.findOneAndUpdate({"_id":postId},{$inc :{'likesCount':1}},{new:true}).lean().exec();
         if(!post){
             throw (new NotFoundException("There is no posts with this Id"));
         }
@@ -96,7 +95,7 @@ export class PostsDataService {
     }
 
     async decLikeCountByPostId(postId:String){
-        const post = await this.postModel.findOneAndUpdate(postId,{$inc :{'likesCount': -1}},{new:true}).lean().exec();
+        const post = await this.postModel.findOneAndUpdate({"_id":postId},{$inc :{'likesCount': -1}},{new:true}).lean().exec();
         if(!post){
             throw (new NotFoundException("There is no posts with this Id"));
         }
@@ -126,7 +125,7 @@ export class PostsDataService {
     }
 
     async incSurveyCount(postId){
-        let post = await this.postModel.findByIdAndUpdate(postId,{$inc: {"data.responseCount":1}},{new:true}).lean().exec();
+        let post = await this.postModel.findByIdAndUpdate({"_id":postId},{$inc: {"data.responseCount":1}},{new:true}).lean().exec();
         if(!post){
             throw (new NotFoundException("There is no posts with this Id"));
         }
@@ -136,7 +135,7 @@ export class PostsDataService {
     }
 
     async incContestCount(postId){
-        let post = await this.postModel.findByIdAndUpdate(postId,{$inc: {"data.participantsCount":1}},{new:true}).lean().exec();
+        let post = await this.postModel.findByIdAndUpdate({"_id":postId},{$inc: {"data.participantsCount":1}},{new:true}).lean().exec();
         if(!post){
             throw (new NotFoundException("There is no posts with this Id"));
         }
@@ -339,7 +338,7 @@ export class PostsDataService {
     }
 
     async getInternshipResponses(postId: string, skip:number, limit:number){
-        let postResponses = await this.responseModel.find( { $and: [ {"postId": postId}, { $or: [ {"data.status": "interviewed"}, {"data.status": "hired"} ] } ] } )
+        let postResponses = await this.responseModel.find( { $and: [ {"postId": postId}, { $or: [ {"data.status": "interviewed"}, {"data.status": "hired"}, {"data.status": "completed"} ] } ] } )
         .limit(limit)
         .skip(skip)
         .sort('-createdAt')

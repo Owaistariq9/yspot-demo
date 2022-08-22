@@ -9,5 +9,6 @@ export class commentsDTO {
         userName:String,
         text:String,
         profilePicture:String,
+        approved:Boolean
     }]
 }

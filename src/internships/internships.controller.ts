@@ -1,8 +1,8 @@
-import { BadRequestException, Body, Controller, Delete, Get, Patch, Post, Request, UseGuards } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Delete, Get, Patch, Post, Put, Request, UseGuards } from '@nestjs/common';
 import { MessagePattern, Payload, RpcException } from '@nestjs/microservices';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { Constants } from 'src/core/constants/constants';
-import { internshipDTO, ResponseDTO, updateInternshipDTO } from './internships.dto';
+import { feedbackDto, internshipDTO, ResponseDTO, updateInternshipDTO } from './internships.dto';
 import { InternshipsService } from './internships.service';
 
 @Controller('internships')
@@ -18,7 +18,7 @@ export class InternshipsController {
             throw new BadRequestException("Only business account can add internships");
         }
         data.userId = req.user._id
-        let posts = await this.internshipsService.insertInternship(data);
+        const posts = await this.internshipsService.insertInternship(data);
         return posts;
     }
 
@@ -27,7 +27,7 @@ export class InternshipsController {
     // @MessagePattern("deleteInternship")
     async deleteInternship(@Request() req:any){
         if(req.user.userClaims.userType !== Constants.business){
-            throw new BadRequestException("Only business account can add internships");
+            throw new BadRequestException("Only business account can delete internships");
         }
         let userId = req.user._id;
         let internship = await this.internshipsService.getInternshipById(req.params.internshipId);
@@ -55,14 +55,44 @@ export class InternshipsController {
         let updatedPost = await this.internshipsService.updateInternship(req.params.internshipId, obj);
         return updatedPost;
     }
+    
+    @UseGuards(JwtAuthGuard)
+    @Get(":internshipId")
+    async getInternshipById(@Request() req:any){
+        const internship = await this.internshipsService.getInternshipDataById(req.params.internshipId, req.user._id);
+        return {"Internship": internship};
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Get(":internshipId/demographics")
+    async getDemographics(@Request() req:any){
+        if(req.user.userClaims.userType !== Constants.business){
+            throw new BadRequestException("Only business account can see demographics");
+        }
+        const demographics = await this.internshipsService.getInternshipDemographics(req.params.internshipId);
+        return {"demographics": demographics};
+    }
 
     @UseGuards(JwtAuthGuard)
     @Get(":page/:limit")
     // @MessagePattern("getInternshipsByPage")
     async getInternshipsByPage(@Request() req:any){
-        let internships:any = await this.internshipsService.getInternshipByPage(req.params.page,req.params.limit,req.user._id);
-        // console.log("here");
+        const internships:any = await this.internshipsService.getInternshipByPage(req.params.page,req.params.limit,req.user._id);
         return internships;
+    }
+
+    // @MessagePattern("getInternshipsByPage")
+    @UseGuards(JwtAuthGuard)
+    @Get("filter/:sort/:industry/:isPaid/:country/:page/:limit")
+    async getFilteredInternshipsByPage(@Request() req:any){
+        if(req.params.isPaid === "true"){
+            req.params.isPaid = true
+        }
+        else{
+            req.params.isPaid = false
+        }
+        return await this.internshipsService.getFilteredInternships(req.params.industry, req.params.isPaid, req.params.country, req.params.sort, req.params.page, req.params.limit, req.user._id);
+        // return {"internships": internships};
     }
 
     @UseGuards(JwtAuthGuard)
@@ -83,7 +113,7 @@ export class InternshipsController {
         if(!req.body.recommandList[0]){
             throw new BadRequestException("recommandList cannot be empty!")
         }
-        let recommands = await this.internshipsService.addRecommands(req.body.recommandList,req.user._id,req.params.internshipId);
+        const recommands = await this.internshipsService.addRecommands(req.body.recommandList,req.user._id,req.params.internshipId);
         return recommands;
     }
 
@@ -91,9 +121,47 @@ export class InternshipsController {
     @Get("recommanded/:page/:limit")
     // @MessagePattern("addRecommand")
     async getAllRecommandedInternships(@Request() req:any){
-        let recommands = await this.internshipsService.getRecommandedInternships(req.user._id,req.params.page,req.params.limit);
+        const recommands = await this.internshipsService.getRecommandedInternships(req.user._id,req.params.page,req.params.limit);
         return {"recommandedTnternships": recommands};
     }
+
+    @UseGuards(JwtAuthGuard)
+    @Put(":internshipId/elastic")
+    async updateInternshipInElasticSearch(@Request() req:any){
+        const internship = await this.internshipsService.updateInternshipInElasticSearch(req.params.internshipId);
+        return {"updatedInternship": internship};
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Put(":internshipId/feedback/:userId")
+    async updateInternshipFeedback(@Request() req:any,
+    @Body() data: feedbackDto){
+        if(req.user.userClaims.userType !== Constants.business){
+            throw new BadRequestException("Only business account can add feedbacks");
+        }
+        const internship = await this.internshipsService.updateUserInternshipFeedback(data, req.params.userId, req.params.internshipId);
+        return {"updatedInternshipFeedback": internship};
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Get(":internshipId/feedback/:userId")
+    async getInternshipFeedback(@Request() req:any){
+        if(req.user.userClaims.userType !== Constants.business){
+            throw new BadRequestException("Only business account can see feedbacks");
+        }
+        const internship = await this.internshipsService.getUserInternshipFeedback(req.params.userId, req.params.internshipId);
+        return {"internshipFeedback": internship};
+    }
+
+    // @UseGuards(JwtAuthGuard)
+    // @Get(":internshipId/demographics")
+    // async getDemographics(@Request() req:any){
+    //     if(req.user.userClaims.userType !== Constants.business){
+    //         throw new BadRequestException("Only business account can see demographics");
+    //     }
+    //     const demographics = await this.internshipsService.getInternshipDemographics(req.params.internshipId);
+    //     return {"demographics": demographics};
+    // }
 
     // @MessagePattern("submitInternshipResponse")
     // async submitInternshipResponse(@Payload() data:any){

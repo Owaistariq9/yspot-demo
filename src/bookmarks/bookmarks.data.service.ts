@@ -23,11 +23,22 @@ export class BookmarksDataService {
     }
   }
 
-  async createBookMark(userId: string, postId: string) {
+  async checkUsersBookmarks(userId: string, postIds: any) {
+    try {
+      const userBookmarkExist = await this.bookmarkModel.find({ "userId": userId, postId: {$in: postIds}}).lean().exec();
+
+      return userBookmarkExist;
+    } catch (err) {
+      return err;
+    }
+  }
+
+  async createBookMark(userId: string, postId: string, postType: string) {
     try {
       const userBookmarkExist = new this.bookmarkModel({
         userId,
         postId,
+        postType
       });
 
       await userBookmarkExist.save();
@@ -56,12 +67,10 @@ export class BookmarksDataService {
     limit: number,
   ) {
     try {
-
-
       const userBookmarksWithPagination = await this.bookmarkModel
-        .find({
-          userId,
-        })
+        .find({"userId":userId})
+        .populate([{path:'postId',model:"Internships"}, {path:'userId',model:"User"}])
+        // .populate({path:'userId',model:"users"})
         .limit(limit)
         .skip(skip)
         .sort('-createdAt')

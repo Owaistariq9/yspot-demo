@@ -11,7 +11,7 @@ export class LikesDataService {
         @InjectModel('Likes') private readonly likeModel: Model<Likes>,
     ) {}
 
-    async insertComment (likeObj:likesDTO){
+    async insertLike (likeObj:likesDTO){
         try{
             const newLike = new this.likeModel(likeObj);
             await newLike.save();
@@ -64,7 +64,7 @@ export class LikesDataService {
     }
 
     async updateLikeByPostId(postId:String, likeObj:any){
-        const likes = await this.likeModel.findOneAndUpdate(postId,{$push:{like:likeObj}},{new:true}).lean().exec();
+        const likes = await this.likeModel.findOneAndUpdate({"postId": postId},{$push:{like:likeObj}},{new:true}).lean().exec();
         if(!likes){
             throw new RpcException(new NotFoundException("There is no likes for this post"));
         }
@@ -72,5 +72,14 @@ export class LikesDataService {
             return likes.like[likes.like.length - 1];
         }
     }
+
+    async checkUsersLikes(userId: string, postIds: any) {
+        try {
+          const userLikeExist = await this.likeModel.find({ "like.userId": userId, postId: {$in: postIds}}).lean().exec();
+          return userLikeExist;
+        } catch (err) {
+          return err;
+        }
+      }
 
 }

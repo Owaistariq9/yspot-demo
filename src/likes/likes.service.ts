@@ -1,10 +1,10 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { RpcException } from '@nestjs/microservices';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+// import { RpcException } from '@nestjs/microservices';
+// import { InjectModel } from '@nestjs/mongoose';
+// import { Model } from 'mongoose';
 import { LikesDataService } from './likes.data.service';
 import { likesDTO } from './likes.dto';
-import { Likes } from './likes.model';
+// import { Likes } from './likes.model';
 
 @Injectable()
 export class LikesService {
@@ -12,9 +12,9 @@ export class LikesService {
         private readonly likesDataService: LikesDataService
     ) {}
 
-    async insertComment (likeObj:likesDTO){
+    async insertLike (likeObj:likesDTO){
         try{
-            const newLike = this.likesDataService.insertComment(likeObj);
+            const newLike = this.likesDataService.insertLike(likeObj);
             return newLike;
         }
         catch(err){
@@ -65,11 +65,15 @@ export class LikesService {
     async updateLikeByPostId(postId:String, likeObj:any){
         const likes:any = await this.likesDataService.updateLikeByPostId(postId,likeObj);
         if(!likes){
-            throw new RpcException(new NotFoundException("There is no likes for this post"));
+            throw (new NotFoundException("There is no likes for this post"));
         }
         else{
-            return likes.like[likes.like.length - 1];
+            return likes;
         }
     }
+
+    async checkUserLikes (userId: string, postIds: any){
+        return await this.likesDataService.checkUsersLikes(userId, postIds);
+      }
 
 }

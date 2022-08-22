@@ -85,7 +85,9 @@ export class SearchService {
             id: postId,
             refresh: true,
             body: {
-                data: data
+                doc: {
+                    data:data
+                }
             }
         })
 
@@ -94,7 +96,6 @@ export class SearchService {
 
     async updateInternshipData (internshipId:string, data: any){
         delete data._id;
-        console.log(data);
         let esData: any = await this.searchService.update({
             index: "internships",
             id: internshipId,
@@ -116,6 +117,21 @@ export class SearchService {
                 query: {
                     match_all: {
                         // _id: postId
+                    }
+                }
+            }
+        })
+
+        return esData;
+    }
+
+    async getPostDataById (postId: String){
+        let esData: any = await this.searchService.search({
+            index: "posts",
+            body: {
+                query: {
+                    match: {
+                        "data._id": postId
                     }
                 }
             }
